@@ -1,9 +1,12 @@
 package com.udacity.stockhawk.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -22,11 +25,18 @@ import android.widget.Toast;
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.Contract;
 import com.udacity.stockhawk.data.PrefUtils;
+import com.udacity.stockhawk.data.StockParcelable;
 import com.udacity.stockhawk.sync.QuoteSyncJob;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
         SwipeRefreshLayout.OnRefreshListener,
@@ -44,9 +54,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     TextView error;
     private StockAdapter adapter;
 
+    private static final String BUNDLE_STOCK_KEY = "stockList";
+    private static final int INDEX_STOCK_ID = 0;
+    private static final int INDEX_SYMBOL = 1;
+    private static final int INDEX_PRICE = 2;
+    private static final int INDEX_ABSOLUTE_CHANGE = 3;
+    private static final int INDEX_PERCENTAGE_CHANGE = 4;
+    private static final int INDEX_HISTORY = 5;
+
+    public static final String EXTRA_SYMBOL = "stockSymbol";
+
     @Override
     public void onClick(String symbol) {
         Timber.d("Symbol clicked: %s", symbol);
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(EXTRA_SYMBOL, symbol);
+        startActivity(intent);
     }
 
     @Override
@@ -60,12 +83,31 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         stockRecyclerView.setAdapter(adapter);
         stockRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        swipeRefreshLayout.setOnRefreshListener(this);
-        swipeRefreshLayout.setRefreshing(true);
-        onRefresh();
-
-        QuoteSyncJob.initialize(this);
-        getSupportLoaderManager().initLoader(STOCK_LOADER, null, this);
+        if (null != savedInstanceState) {
+            Timber.d("not null");
+            ArrayList<StockParcelable> stockList = savedInstanceState.getParcelableArrayList(BUNDLE_STOCK_KEY);
+            String[] columns = new String[] { "_id", "symbol", "price", "absolute_change", "percentage_change", "history" };
+            MatrixCursor matrixCursor = new MatrixCursor(columns);
+            startManagingCursor(matrixCursor);
+            for (StockParcelable stock: stockList) {
+                matrixCursor.addRow(new Object[] {
+                        stock.getId(),
+                        stock.getSymbol(),
+                        stock.getPrice(),
+                        stock.getAbsolute_change(),
+                        stock.getPercentage_change(),
+                        stock.getHistory()
+                });
+            }
+            adapter.setCursor(matrixCursor);
+        } else {
+            Timber.d("null");
+            QuoteSyncJob.initialize(this);
+            swipeRefreshLayout.setOnRefreshListener(this);
+            swipeRefreshLayout.setRefreshing(true);
+            onRefresh();
+            getSupportLoaderManager().initLoader(STOCK_LOADER, null, this);
+        }
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
@@ -120,14 +162,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (symbol != null && !symbol.isEmpty()) {
 
             if (networkUp()) {
-                swipeRefreshLayout.setRefreshing(true);
+                new SymbolCheckTask().execute(symbol);
             } else {
                 String message = getString(R.string.toast_stock_added_no_connectivity, symbol);
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                PrefUtils.addStock(this, symbol);
+                QuoteSyncJob.syncImmediately(getApplicationContext());
             }
-
-            PrefUtils.addStock(this, symbol);
-            QuoteSyncJob.syncImmediately(this);
         }
     }
 
@@ -186,4 +227,67 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Cursor stockCursor = adapter.getCursor();
+
+        if (null != stockCursor) {
+            stockCursor.moveToFirst();
+            List<StockParcelable> stockList = new ArrayList<>();
+            try {
+                do {
+                    stockList.add(createMovieFromCursor(stockCursor));
+                } while (stockCursor.moveToNext());
+            } finally {
+                stockCursor.close();
+            }
+            outState.putParcelableArrayList(BUNDLE_STOCK_KEY, new ArrayList<>(stockList));
+        }
+    }
+
+    private StockParcelable createMovieFromCursor(Cursor cursor) {
+        return new StockParcelable(
+                cursor.getInt(INDEX_STOCK_ID),
+                cursor.getString(INDEX_SYMBOL),
+                cursor.getString(INDEX_PRICE),
+                cursor.getString(INDEX_ABSOLUTE_CHANGE),
+                cursor.getString(INDEX_PERCENTAGE_CHANGE),
+                cursor.getString(INDEX_HISTORY)
+        );
+    }
+
+    private class SymbolCheckTask extends AsyncTask<String, Void, Stock> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            swipeRefreshLayout.setRefreshing(true);
+        }
+
+        @Override
+        protected Stock doInBackground(String... params) {
+            try {
+                return YahooFinance.get(params[0]);
+            }  catch (IOException exception) {
+                Timber.e(exception, "Error fetching stock quotes");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Stock stock) {
+            super.onPostExecute(stock);
+
+            if (null != stock.getName()) {
+                PrefUtils.addStock(getApplicationContext(), stock.getSymbol());
+                QuoteSyncJob.syncImmediately(getApplicationContext());
+            } else {
+                Toast.makeText(getApplicationContext(), "Symbol not found", Toast.LENGTH_LONG).show();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }
+    }
+
 }

@@ -47,6 +47,10 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
         notifyDataSetChanged();
     }
 
+    Cursor getCursor() {
+        return cursor;
+    }
+
     String getSymbolAtPosition(int position) {
 
         cursor.moveToPosition(position);
@@ -101,7 +105,6 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
         }
         return count;
     }
-
 
     interface StockAdapterOnClickHandler {
         void onClick(String symbol);
