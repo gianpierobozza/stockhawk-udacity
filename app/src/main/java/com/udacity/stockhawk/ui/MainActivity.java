@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             List<StockParcelable> stockList = new ArrayList<>();
             try {
                 do {
-                    stockList.add(createMovieFromCursor(stockCursor));
+                    stockList.add(createStockFromCursor(stockCursor));
                 } while (stockCursor.moveToNext());
             } finally {
                 stockCursor.close();
@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
-    private StockParcelable createMovieFromCursor(Cursor cursor) {
+    private StockParcelable createStockFromCursor(Cursor cursor) {
         return new StockParcelable(
                 cursor.getInt(INDEX_STOCK_ID),
                 cursor.getString(INDEX_SYMBOL),
