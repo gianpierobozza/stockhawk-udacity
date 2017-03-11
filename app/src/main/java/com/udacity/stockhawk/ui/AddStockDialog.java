@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -66,10 +67,8 @@ public class AddStockDialog extends DialogFragment {
     }
 
     private void addStock() {
-        Activity parent = getActivity();
-        if (parent instanceof MainActivity) {
-            ((MainActivity) parent).addStock(stock.getText().toString());
-        }
+        StockFragment stockFragment = getFragmentManager().findFragmentById(R.id.stock_fragment);
+        stockFragment.addStock(stock.getText().toString());
         dismissAllowingStateLoss();
     }
 
