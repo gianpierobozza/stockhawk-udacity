@@ -1,13 +1,12 @@
 package com.udacity.stockhawk.ui;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +19,6 @@ import com.udacity.stockhawk.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 
 public class AddStockDialog extends DialogFragment {
 
@@ -67,7 +65,8 @@ public class AddStockDialog extends DialogFragment {
     }
 
     private void addStock() {
-        StockFragment stockFragment = getFragmentManager().findFragmentById(R.id.stock_fragment);
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        StockFragment stockFragment = (StockFragment)fm.findFragmentById(R.id.fragment_stocks);
         stockFragment.addStock(stock.getText().toString());
         dismissAllowingStateLoss();
     }

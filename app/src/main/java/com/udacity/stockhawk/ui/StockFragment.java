@@ -1,14 +1,15 @@
 package com.udacity.stockhawk.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -33,6 +34,8 @@ import com.udacity.stockhawk.data.StockParcelable;
 import com.udacity.stockhawk.sync.QuoteSyncJob;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,14 +49,11 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private static final int STOCK_LOADER = 0;
     @SuppressWarnings("WeakerAccess")
-    @BindView(R.id.recycler_view)
-    RecyclerView stockRecyclerView;
+    @BindView(R.id.recycler_view) RecyclerView stockRecyclerView;
     @SuppressWarnings("WeakerAccess")
-    @BindView(R.id.swipe_refresh)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     @SuppressWarnings("WeakerAccess")
-    @BindView(R.id.error)
-    TextView error;
+    @BindView(R.id.error) TextView error;
     private StockAdapter mAdapter;
     private Context mContext;
 
@@ -67,24 +67,48 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
 
     public static final String EXTRA_SYMBOL = "stockSymbol";
 
-    public interface Callback {
-        /**
-         * DetailFragmentCallback for when an item has been selected.
-         */
-        public void onItemSelected(String symbol, StockAdapter.StockViewHolder vh);
-    }
-
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-        mContext = getContext();
-        View rootView = inflater.inflate(R.layout.stock_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_stocks, container, false);
         ButterKnife.bind(this, rootView);
+        mContext = getContext();
 
         mAdapter = new StockAdapter(mContext, this);
         stockRecyclerView.setAdapter(mAdapter);
         stockRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+
+        if (null != savedInstanceState) {
+            Timber.d("not null");
+            ArrayList<StockParcelable> stockList = savedInstanceState.getParcelableArrayList(BUNDLE_STOCK_KEY);
+            String[] columns = new String[] { "_id", "symbol", "price", "absolute_change", "percentage_change", "history" };
+            MatrixCursor matrixCursor = new MatrixCursor(columns);
+            getActivity().startManagingCursor(matrixCursor);
+            for (StockParcelable stock: stockList) {
+                matrixCursor.addRow(new Object[] {
+                        stock.getId(),
+                        stock.getSymbol(),
+                        stock.getPrice(),
+                        stock.getAbsolute_change(),
+                        stock.getPercentage_change(),
+                        stock.getHistory()
+                });
+            }
+            mAdapter.setCursor(matrixCursor);
+        } else {
+            Timber.d("null");
+            QuoteSyncJob.initialize(mContext);
+            mSwipeRefreshLayout.setOnRefreshListener(this);
+            mSwipeRefreshLayout.setRefreshing(true);
+            onRefresh();
+            getActivity().getSupportLoaderManager().initLoader(STOCK_LOADER, null, this);
+        }
+
+        FloatingActionButton addStockFab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        addStockFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                new AddStockDialog().show(getActivity().getSupportFragmentManager(), "StockDialogFragment");
+            }
+        });
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
@@ -99,6 +123,27 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
                 mContext.getContentResolver().delete(Contract.Quote.makeUriForStock(symbol), null, null);
             }
         }).attachToRecyclerView(stockRecyclerView);
+
+        return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Cursor stockCursor = mAdapter.getCursor();
+
+        if (null != stockCursor) {
+            stockCursor.moveToFirst();
+            List<StockParcelable> stockList = new ArrayList<>();
+            try {
+                do {
+                    stockList.add(createStockFromCursor(stockCursor));
+                } while (stockCursor.moveToNext());
+            } finally {
+                stockCursor.close();
+            }
+            outState.putParcelableArrayList(BUNDLE_STOCK_KEY, new ArrayList<>(stockList));
+        }
     }
 
     private boolean networkUp() {
@@ -167,7 +212,6 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         setDisplayModeMenuItemIcon(item);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -199,10 +243,6 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
                 cursor.getString(INDEX_PERCENTAGE_CHANGE),
                 cursor.getString(INDEX_HISTORY)
         );
-    }
-
-    public void button(@SuppressWarnings("UnusedParameters") View view) {
-        new AddStockDialog().show(((Activity) mContext).getFragmentManager(), "StockDialogFragment");
     }
 
     void addStock(String symbol) {
