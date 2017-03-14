@@ -47,25 +47,20 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         SwipeRefreshLayout.OnRefreshListener,
         StockAdapter.StockAdapterOnClickHandler {
 
-    private static final int STOCK_LOADER = 0;
     @SuppressWarnings("WeakerAccess")
     @BindView(R.id.recycler_view) RecyclerView stockRecyclerView;
     @SuppressWarnings("WeakerAccess")
     @BindView(R.id.swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     @SuppressWarnings("WeakerAccess")
-    @BindView(R.id.error) TextView error;
+    @BindView(R.id.error) TextView mError;
     private StockAdapter mAdapter;
     private Context mContext;
 
     private static final String BUNDLE_STOCK_KEY = "stockList";
-    private static final int INDEX_STOCK_ID = 0;
-    private static final int INDEX_SYMBOL = 1;
-    private static final int INDEX_PRICE = 2;
-    private static final int INDEX_ABSOLUTE_CHANGE = 3;
-    private static final int INDEX_PERCENTAGE_CHANGE = 4;
-    private static final int INDEX_HISTORY = 5;
 
     public static final String EXTRA_SYMBOL = "stockSymbol";
+
+    private static final int STOCK_LOADER = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,10 +73,8 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         stockRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
         if (null != savedInstanceState) {
-            Timber.d("not null");
             ArrayList<StockParcelable> stockList = savedInstanceState.getParcelableArrayList(BUNDLE_STOCK_KEY);
-            String[] columns = new String[] { "_id", "symbol", "price", "absolute_change", "percentage_change", "history" };
-            MatrixCursor matrixCursor = new MatrixCursor(columns);
+            MatrixCursor matrixCursor = new MatrixCursor(DetailFragment.DETAIL_COLUMNS);
             getActivity().startManagingCursor(matrixCursor);
             for (StockParcelable stock: stockList) {
                 matrixCursor.addRow(new Object[] {
@@ -95,7 +88,6 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
             }
             mAdapter.setCursor(matrixCursor);
         } else {
-            Timber.d("null");
             QuoteSyncJob.initialize(mContext);
             mSwipeRefreshLayout.setOnRefreshListener(this);
             mSwipeRefreshLayout.setRefreshing(true);
@@ -166,7 +158,7 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         mSwipeRefreshLayout.setRefreshing(false);
 
         if (data.getCount() != 0) {
-            error.setVisibility(View.GONE);
+            mError.setVisibility(View.GONE);
         }
         mAdapter.setCursor(data);
     }
@@ -183,17 +175,17 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
 
         if (!networkUp() && mAdapter.getItemCount() == 0) {
             mSwipeRefreshLayout.setRefreshing(false);
-            error.setText(getString(R.string.error_no_network));
-            error.setVisibility(View.VISIBLE);
+            mError.setText(getString(R.string.error_no_network));
+            mError.setVisibility(View.VISIBLE);
         } else if (!networkUp()) {
             mSwipeRefreshLayout.setRefreshing(false);
             Toast.makeText(mContext, R.string.toast_no_connectivity, Toast.LENGTH_LONG).show();
         } else if (PrefUtils.getStocks(mContext).size() == 0) {
             mSwipeRefreshLayout.setRefreshing(false);
-            error.setText(getString(R.string.error_no_stocks));
-            error.setVisibility(View.VISIBLE);
+            mError.setText(getString(R.string.error_no_stocks));
+            mError.setVisibility(View.VISIBLE);
         } else {
-            error.setVisibility(View.GONE);
+            mError.setVisibility(View.GONE);
         }
     }
 
@@ -236,12 +228,12 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private StockParcelable createStockFromCursor(Cursor cursor) {
         return new StockParcelable(
-                cursor.getInt(INDEX_STOCK_ID),
-                cursor.getString(INDEX_SYMBOL),
-                cursor.getString(INDEX_PRICE),
-                cursor.getString(INDEX_ABSOLUTE_CHANGE),
-                cursor.getString(INDEX_PERCENTAGE_CHANGE),
-                cursor.getString(INDEX_HISTORY)
+                cursor.getInt(DetailFragment.POSITION_ID),
+                cursor.getString(DetailFragment.POSITION_SYMBOL),
+                cursor.getString(DetailFragment.POSITION_PRICE),
+                cursor.getString(DetailFragment.POSITION_ABSOLUTE_CHANGE),
+                cursor.getString(DetailFragment.POSITION_PERCENTAGE_CHANGE),
+                cursor.getString(DetailFragment.POSITION_HISTORY)
         );
     }
 
