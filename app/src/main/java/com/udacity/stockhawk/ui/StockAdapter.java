@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.udacity.stockhawk.R;
@@ -19,6 +20,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
 
@@ -28,6 +30,7 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
     private final DecimalFormat percentageFormat;
     private Cursor cursor;
     private final StockAdapterOnClickHandler clickHandler;
+    private boolean mTwoPane;
 
     StockAdapter(Context context, StockAdapterOnClickHandler clickHandler) {
         this.context = context;
@@ -52,7 +55,6 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
     }
 
     String getSymbolAtPosition(int position) {
-
         cursor.moveToPosition(position);
         return cursor.getString(Contract.Quote.POSITION_SYMBOL);
     }
@@ -88,6 +90,11 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
         } else {
             holder.change.setText(percentage);
         }
+
+        if (position == 0 && mTwoPane) {
+            Timber.d("Load first, TwoPane");
+            holder.mListItem.performClick();
+        }
     }
 
     @Override
@@ -100,19 +107,19 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
     }
 
     interface StockAdapterOnClickHandler {
-        void onClick(String symbol);
+        void onClick(String symbol, StockAdapter.StockViewHolder vh);
+    }
+
+    void setTwoPane(boolean twoPane) {
+        mTwoPane = twoPane;
     }
 
     class StockViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @BindView(R.id.symbol)
-        TextView symbol;
-
-        @BindView(R.id.price)
-        TextView price;
-
-        @BindView(R.id.change)
-        TextView change;
+        @BindView(R.id.list_item) LinearLayout mListItem;
+        @BindView(R.id.symbol) TextView symbol;
+        @BindView(R.id.price) TextView price;
+        @BindView(R.id.change) TextView change;
 
         StockViewHolder(View itemView) {
             super(itemView);
@@ -124,11 +131,11 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
             cursor.moveToPosition(adapterPosition);
-            int symbolColumn = cursor.getColumnIndex(Contract.Quote.COLUMN_SYMBOL);
-            clickHandler.onClick(cursor.getString(symbolColumn));
-
+            clickHandler.onClick(cursor.getString(
+                    cursor.getColumnIndex(Contract.Quote.COLUMN_SYMBOL)),
+                    this
+            );
         }
-
-
     }
+
 }

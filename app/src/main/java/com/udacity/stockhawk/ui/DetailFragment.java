@@ -63,7 +63,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (arguments != null) {
             mSymbol = arguments.getString(DETAIL_COLUMNS[POSITION_SYMBOL]);
             mUri = Contract.Quote.makeUriForStock(mSymbol);
-            getActivity().setTitle(mSymbol);
         }
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
@@ -96,9 +95,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Timber.d("onLoadFinished");
+        //Timber.d("onLoadFinished");
         if (data != null && data.moveToFirst()) {
-            Timber.i("History: %s", data.getString(POSITION_HISTORY));
+            //Timber.i("History: %s", data.getString(POSITION_HISTORY));
             try {
                 CSVReader reader = new CSVReader(new StringReader(data.getString(POSITION_HISTORY)));
                 List<String[]> history = reader.readAll();
@@ -109,8 +108,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 List<Entry> entries = new ArrayList<>();
 
                 for (int i = 0; i < history.size(); i++) {
-                    Timber.d("First value: %s", history.get(i)[0]);
-                    Timber.d("Second value: %s", history.get(i)[1]);
+                    //Timber.d("First value: %s", history.get(i)[0]);
+                    //Timber.d("Second value: %s", history.get(i)[1]);
                     entries.add(new Entry(i, Float.parseFloat(history.get(i)[1])));
 
                     xValues[i] = history.get(i)[0];

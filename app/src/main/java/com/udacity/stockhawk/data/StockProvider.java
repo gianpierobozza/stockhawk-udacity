@@ -52,7 +52,6 @@ public class StockProvider extends ContentProvider {
                         sortOrder
                 );
                 break;
-
             case QUOTE_FOR_SYMBOL:
                 returnCursor = db.query(
                         Contract.Quote.TABLE_NAME,
@@ -63,7 +62,6 @@ public class StockProvider extends ContentProvider {
                         null,
                         sortOrder
                 );
-
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown URI:" + uri);

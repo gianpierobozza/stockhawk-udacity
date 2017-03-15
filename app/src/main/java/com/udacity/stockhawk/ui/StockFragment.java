@@ -1,7 +1,6 @@
 package com.udacity.stockhawk.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.ConnectivityManager;
@@ -19,9 +18,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -44,8 +40,7 @@ import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
 public class StockFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
-        SwipeRefreshLayout.OnRefreshListener,
-        StockAdapter.StockAdapterOnClickHandler {
+        SwipeRefreshLayout.OnRefreshListener {
 
     @SuppressWarnings("WeakerAccess")
     @BindView(R.id.recycler_view) RecyclerView stockRecyclerView;
@@ -53,8 +48,9 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
     @BindView(R.id.swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     @SuppressWarnings("WeakerAccess")
     @BindView(R.id.error) TextView mError;
-    private StockAdapter mAdapter;
+    public StockAdapter mAdapter;
     private Context mContext;
+    private boolean mTwoPane;
 
     private static final String BUNDLE_STOCK_KEY = "stockList";
 
@@ -62,13 +58,24 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private static final int STOCK_LOADER = 0;
 
+    public interface Callback {
+        void onItemSelected(String symbol, StockAdapter.StockViewHolder vh);
+    }
+
+    public StockFragment() { }
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_stocks, container, false);
         ButterKnife.bind(this, rootView);
         mContext = getContext();
 
-        mAdapter = new StockAdapter(mContext, this);
+        mAdapter = new StockAdapter(mContext, new StockAdapter.StockAdapterOnClickHandler() {
+            @Override
+            public void onClick(String symbol, StockAdapter.StockViewHolder vh) {
+                ((Callback) getActivity()).onItemSelected(symbol, vh);
+            }
+        });
         stockRecyclerView.setAdapter(mAdapter);
         stockRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
@@ -189,43 +196,6 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         }
     }
 
-    @Override
-    public void onClick(String symbol) {
-        Timber.d("Symbol clicked: %s", symbol);
-        Intent intent = new Intent(mContext, DetailActivity.class);
-        intent.putExtra(EXTRA_SYMBOL, symbol);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main_activity_settings, menu);
-        MenuItem item = menu.findItem(R.id.action_change_units);
-        setDisplayModeMenuItemIcon(item);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_change_units) {
-            PrefUtils.toggleDisplayMode(mContext);
-            setDisplayModeMenuItemIcon(item);
-            mAdapter.notifyDataSetChanged();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void setDisplayModeMenuItemIcon(MenuItem item) {
-        if (PrefUtils.getDisplayMode(mContext)
-                .equals(getString(R.string.pref_display_mode_absolute_key))) {
-            item.setIcon(R.drawable.ic_percentage);
-        } else {
-            item.setIcon(R.drawable.ic_dollar);
-        }
-    }
-
     private StockParcelable createStockFromCursor(Cursor cursor) {
         return new StockParcelable(
                 cursor.getInt(DetailFragment.POSITION_ID),
@@ -248,6 +218,13 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
                 PrefUtils.addStock(mContext, symbol);
                 QuoteSyncJob.syncImmediately(mContext);
             }
+        }
+    }
+
+    public void setTwoPane(boolean twoPane) {
+        mTwoPane = twoPane;
+        if (mAdapter != null) {
+            mAdapter.setTwoPane(mTwoPane);
         }
     }
 
