@@ -3,6 +3,7 @@ package com.udacity.stockhawk.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -10,8 +11,6 @@ import android.view.MenuItem;
 
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.PrefUtils;
-
-import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements StockFragment.Callback {
 
@@ -22,28 +21,9 @@ public class MainActivity extends AppCompatActivity implements StockFragment.Cal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String symbol = getIntent() != null ? getIntent().getStringExtra(StockFragment.EXTRA_SYMBOL) : null;
         setContentView(R.layout.activity_main);
 
-        if (findViewById(R.id.stock_detail_container) != null) {
-            mTwoPane = true;
-            if (savedInstanceState == null) {
-                DetailFragment fragment = new DetailFragment();
-                Timber.d("Two panes, symbol: " + symbol);
-                if (symbol != null) {
-                    Bundle args = new Bundle();
-                    args.putString(DetailFragment.DETAIL_COLUMNS[DetailFragment.POSITION_SYMBOL],
-                            symbol);
-                    fragment.setArguments(args);
-                }
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.stock_detail_container, fragment, DETAILFRAGMENT_TAG)
-                        .commit();
-            }
-        } else {
-            mTwoPane = false;
-        }
-
+        mTwoPane = (null != findViewById(R.id.stock_detail_container)) ? true : false;
         mStockFragment = ((StockFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_stocks));
         mStockFragment.setTwoPane(mTwoPane);
@@ -59,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements StockFragment.Cal
             fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.stock_detail_container, fragment, DETAILFRAGMENT_TAG)
                     .commit();
         } else {

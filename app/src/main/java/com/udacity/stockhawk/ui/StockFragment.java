@@ -95,7 +95,7 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
             }
             mAdapter.setCursor(matrixCursor);
         } else {
-            QuoteSyncJob.initialize(mContext);
+            QuoteSyncJob.initialize(mContext, QuoteSyncJob.PERIODIC_ID);
             mSwipeRefreshLayout.setOnRefreshListener(this);
             mSwipeRefreshLayout.setRefreshing(true);
             onRefresh();
