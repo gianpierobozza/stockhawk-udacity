@@ -127,6 +127,25 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // Send the first symbol of the list from SharedPrefs to DetailFragment
+        if (null == savedInstanceState && mTwoPane) {
+            String symbol = PrefUtils.getSymbolAtPos(mContext, 0);
+            if (!symbol.equals("")) {
+                Bundle arguments = new Bundle();
+                arguments.putString(DetailFragment.DETAIL_COLUMNS[DetailFragment.POSITION_SYMBOL],
+                        symbol);
+                DetailFragment fragment = new DetailFragment();
+                fragment.setArguments(arguments);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.stock_detail_container, fragment)
+                        .commit();
+            }
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Cursor stockCursor = mAdapter.getCursor();
@@ -223,9 +242,6 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
 
     public void setTwoPane(boolean twoPane) {
         mTwoPane = twoPane;
-        if (mAdapter != null) {
-            mAdapter.setTwoPane(mTwoPane);
-        }
     }
 
     private class SymbolCheckTask extends AsyncTask<String, Void, Stock> {

@@ -6,7 +6,9 @@ import android.preference.PreferenceManager;
 
 import com.udacity.stockhawk.R;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,8 +24,6 @@ public final class PrefUtils {
 
         HashSet<String> defaultStocks = new HashSet<>(Arrays.asList(defaultStocksList));
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
-
         boolean initialized = prefs.getBoolean(initializedKey, false);
 
         if (!initialized) {
@@ -34,7 +34,18 @@ public final class PrefUtils {
             return defaultStocks;
         }
         return prefs.getStringSet(stocksKey, new HashSet<String>());
+    }
 
+    public static String getSymbolAtPos(Context context, int pos) {
+        Set<String> stocks = PrefUtils.getStocks(context);
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (String str : stocks)
+            arrayList.add(str);
+        Collections.sort(arrayList);
+        if (arrayList.size() > pos) {
+            return arrayList.get(pos);
+        }
+        return "";
     }
 
     private static void editStockPref(Context context, String symbol, Boolean add) {
@@ -74,9 +85,7 @@ public final class PrefUtils {
         String percentageKey = context.getString(R.string.pref_display_mode_percentage_key);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
         String displayMode = getDisplayMode(context);
-
         SharedPreferences.Editor editor = prefs.edit();
 
         if (displayMode.equals(absoluteKey)) {

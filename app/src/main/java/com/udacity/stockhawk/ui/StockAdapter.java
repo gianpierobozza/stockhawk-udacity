@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
 
@@ -30,7 +29,6 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
     private final DecimalFormat percentageFormat;
     private Cursor cursor;
     private final StockAdapterOnClickHandler clickHandler;
-    private boolean mTwoPane;
 
     StockAdapter(Context context, StockAdapterOnClickHandler clickHandler) {
         this.context = context;
@@ -90,11 +88,6 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
         } else {
             holder.change.setText(percentage);
         }
-
-        if (position == 0 && mTwoPane) {
-            Timber.d("Load first, TwoPane");
-            holder.mListItem.performClick();
-        }
     }
 
     @Override
@@ -108,10 +101,6 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
 
     interface StockAdapterOnClickHandler {
         void onClick(String symbol, StockAdapter.StockViewHolder vh);
-    }
-
-    void setTwoPane(boolean twoPane) {
-        mTwoPane = twoPane;
     }
 
     class StockViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

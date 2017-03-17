@@ -23,7 +23,25 @@ public class MainActivity extends AppCompatActivity implements StockFragment.Cal
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTwoPane = (null != findViewById(R.id.stock_detail_container)) ? true : false;
+        String symbol = getIntent() != null ? getIntent().getStringExtra(StockFragment.EXTRA_SYMBOL) : null;
+        if (findViewById(R.id.stock_detail_container) != null) {
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                DetailFragment fragment = new DetailFragment();
+                if (symbol != null) {
+                    Bundle args = new Bundle();
+                    args.putString(DetailFragment.DETAIL_COLUMNS[DetailFragment.POSITION_SYMBOL],
+                            symbol);
+                    fragment.setArguments(args);
+                }
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.stock_detail_container, fragment, DETAILFRAGMENT_TAG)
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
+        }
+
         mStockFragment = ((StockFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_stocks));
         mStockFragment.setTwoPane(mTwoPane);
