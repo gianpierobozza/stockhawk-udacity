@@ -157,8 +157,8 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
                 do {
                     stockList.add(createStockFromCursor(stockCursor));
                 } while (stockCursor.moveToNext());
-            } finally {
-                stockCursor.close();
+            } catch (Exception e) {
+                Timber.e("Cursor Exception");
             }
             outState.putParcelableArrayList(BUNDLE_STOCK_KEY, new ArrayList<>(stockList));
         }

@@ -12,8 +12,10 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -24,9 +26,12 @@ import com.udacity.stockhawk.formatter.XAxisDateValueFormatter;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import au.com.bytecode.opencsv.CSVReader;
 import butterknife.BindView;
@@ -35,7 +40,11 @@ import timber.log.Timber;
 
 public class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    @BindView(R.id.stock_chart) LineChart lineChart;
+    @BindView(R.id.stock_chart) LineChart mLineChart;
+    @BindView(R.id.detail_symbol) TextView mDetailSymbol;
+    @BindView(R.id.detail_price)TextView mDetailPrice;
+    @BindView(R.id.detail_abs_change) TextView mDetailAbsChange;
+    @BindView(R.id.detail_perc_change) TextView mDetailPercChange;
     private Uri mUri;
     private String mSymbol;
 
@@ -68,6 +77,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         ButterKnife.bind(this, rootView);
 
+        mDetailSymbol.setText(mSymbol);
+
         return rootView;
     }
 
@@ -95,9 +106,33 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        //Timber.d("onLoadFinished");
         if (data != null && data.moveToFirst()) {
-            //Timber.i("History: %s", data.getString(POSITION_HISTORY));
+            DecimalFormat dollarFormat = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
+            mDetailPrice.setText(dollarFormat.format(Float.parseFloat(data.getString(POSITION_PRICE))));
+
+            DecimalFormat dollarFormatWithPlus = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
+            dollarFormatWithPlus.setPositivePrefix("+$");
+            DecimalFormat percentageFormat = (DecimalFormat) NumberFormat.getPercentInstance(Locale.getDefault());
+            percentageFormat.setMaximumFractionDigits(2);
+            percentageFormat.setMinimumFractionDigits(2);
+            percentageFormat.setPositivePrefix("+");
+
+            float rawAbsoluteChange = Float.parseFloat(data.getString(POSITION_ABSOLUTE_CHANGE));
+            float percentageChange = Float.parseFloat(data.getString(POSITION_PERCENTAGE_CHANGE));
+
+            mDetailAbsChange.setBackgroundResource(R.drawable.percent_change_pill_red);
+            if (rawAbsoluteChange > 0) {
+                mDetailAbsChange.setBackgroundResource(R.drawable.percent_change_pill_green);
+            }
+
+            mDetailPercChange.setBackgroundResource(R.drawable.percent_change_pill_red);
+            if (percentageChange > 0) {
+                mDetailPercChange.setBackgroundResource(R.drawable.percent_change_pill_green);
+            }
+
+            mDetailAbsChange.setText(dollarFormatWithPlus.format(rawAbsoluteChange));
+            mDetailPercChange.setText(percentageFormat.format(percentageChange / 100));
+
             try {
                 CSVReader reader = new CSVReader(new StringReader(data.getString(POSITION_HISTORY)));
                 List<String[]> history = reader.readAll();
@@ -108,26 +143,25 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 List<Entry> entries = new ArrayList<>();
 
                 for (int i = 0; i < history.size(); i++) {
-                    //Timber.d("First value: %s", history.get(i)[0]);
-                    //Timber.d("Second value: %s", history.get(i)[1]);
                     entries.add(new Entry(i, Float.parseFloat(history.get(i)[1])));
-
                     xValues[i] = history.get(i)[0];
                 }
 
-                XAxis xAxis = lineChart.getXAxis();
+                XAxis xAxis = mLineChart.getXAxis();
                 xAxis.setValueFormatter(new XAxisDateValueFormatter(xValues, getActivity().getApplicationContext()));
 
-                LineDataSet dataSet = new LineDataSet(entries, "Label");
+                LineDataSet dataSet = new LineDataSet(entries, mSymbol);
                 dataSet.setColor(Color.RED);
                 dataSet.setCircleColor(Color.BLACK);
                 dataSet.setValueTextColor(Color.BLACK);
 
                 LineData lineData = new LineData(dataSet);
-                lineChart.setData(lineData);
-                lineChart.setBackgroundColor(Color.WHITE);
-                lineChart.invalidate();
-
+                Description chartDesc = new Description();
+                chartDesc.setText(getString(R.string.chart_description));
+                mLineChart.setDescription(chartDesc);
+                mLineChart.setData(lineData);
+                mLineChart.setBackgroundColor(Color.WHITE);
+                mLineChart.invalidate();
             } catch (IOException exception) {
                 Timber.e(exception, "Error parsing stock history");
             }
@@ -136,4 +170,5 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) { }
+
 }

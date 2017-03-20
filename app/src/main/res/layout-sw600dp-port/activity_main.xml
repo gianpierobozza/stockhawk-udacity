@@ -8,9 +8,11 @@
         android:id="@+id/stock_detail_container"
         android:name="com.udacity.stockhawk.ui.DetailFragment"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="@dimen/detail_container_port_width"
         android:layout_marginLeft="@dimen/abc_list_item_padding_horizontal_material"
-        android:layout_marginRight="@dimen/abc_list_item_padding_horizontal_material" />
+        android:layout_marginRight="@dimen/abc_list_item_padding_horizontal_material"
+        android:layout_marginTop="@dimen/detail_container_top_margin"
+        android:layout_marginBottom="@dimen/detail_container_bottom_margin" />
 
     <fragment
         android:id="@+id/fragment_stocks"

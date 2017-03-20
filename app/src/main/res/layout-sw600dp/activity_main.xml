@@ -27,9 +27,7 @@
         android:layout_alignLeft="@id/layout_center"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="?attr/actionBarSize"
         android:layout_alignStart="@id/layout_center"
-        android:elevation="@dimen/appbar_elevation"
         android:layout_marginRight="@dimen/list_item_extra_padding"
         android:layout_marginEnd="@dimen/list_item_extra_padding" />
 
@@ -46,6 +44,7 @@
         android:layout_alignBottom="@id/cardviewAligner"
         android:layout_marginRight="@dimen/abc_list_item_padding_horizontal_material"
         android:layout_marginEnd="@dimen/abc_list_item_padding_horizontal_material"
+        android:layout_marginTop="@dimen/detail_container_top_margin"
         android:layout_marginBottom="@dimen/detail_container_bottom_margin" />
 
 </RelativeLayout>
