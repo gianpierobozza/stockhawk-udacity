@@ -22,7 +22,8 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.Contract;
-import com.udacity.stockhawk.formatter.XAxisDateValueFormatter;
+import com.udacity.stockhawk.utilities.DecimalFormatUtils;
+import com.udacity.stockhawk.utilities.XAxisDateValueFormatter;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -107,15 +108,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.moveToFirst()) {
-            DecimalFormat dollarFormat = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
-            mDetailPrice.setText(dollarFormat.format(Float.parseFloat(data.getString(POSITION_PRICE))));
-
-            DecimalFormat dollarFormatWithPlus = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
-            dollarFormatWithPlus.setPositivePrefix("+$");
-            DecimalFormat percentageFormat = (DecimalFormat) NumberFormat.getPercentInstance(Locale.getDefault());
-            percentageFormat.setMaximumFractionDigits(2);
-            percentageFormat.setMinimumFractionDigits(2);
-            percentageFormat.setPositivePrefix("+");
+            mDetailPrice.setText(DecimalFormatUtils.getDollarFormat(data.getString(POSITION_PRICE)));
 
             float rawAbsoluteChange = Float.parseFloat(data.getString(POSITION_ABSOLUTE_CHANGE));
             float percentageChange = Float.parseFloat(data.getString(POSITION_PERCENTAGE_CHANGE));
@@ -130,8 +123,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 mDetailPercChange.setBackgroundResource(R.drawable.percent_change_pill_green);
             }
 
-            mDetailAbsChange.setText(dollarFormatWithPlus.format(rawAbsoluteChange));
-            mDetailPercChange.setText(percentageFormat.format(percentageChange / 100));
+            mDetailAbsChange.setText(DecimalFormatUtils.getDollarFormatWithPlus(rawAbsoluteChange));
+            mDetailPercChange.setText(DecimalFormatUtils.getPercentage(percentageChange));
 
             try {
                 CSVReader reader = new CSVReader(new StringReader(data.getString(POSITION_HISTORY)));

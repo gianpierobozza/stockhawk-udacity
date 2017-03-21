@@ -8,4 +8,19 @@
     <dimen name="detail_view_padding">@dimen/abc_list_item_padding_horizontal_material</dimen>
     <dimen name="detail_container_top_margin">@dimen/detail_view_padding</dimen>
     <dimen name="detail_container_bottom_margin">@dimen/detail_view_padding</dimen>
+
+    <!-- Widget -->
+    <dimen name="widget_quote_default_width">250dp</dimen>
+    <dimen name="widget_quote_default_height">40dp</dimen>
+    <dimen name="widget_quote_min_resize_width">250dp</dimen>
+    <dimen name="widget_quote_min_resize_height">@dimen/widget_quote_default_height</dimen>
+    <dimen name="widget_quote_large_width">320dp</dimen>
+
+    <dimen name="widget_list_default_width">250dp</dimen>
+    <dimen name="widget_list_default_height">180dp</dimen>
+    <dimen name="widget_list_min_resize_width">220dp</dimen>
+    <dimen name="widget_list_min_resize_height">@dimen/widget_list_default_height</dimen>
+
+    <dimen name="quote_widget_text_size">24dp</dimen>
+    <dimen name="quote_widget_text_width">38dp</dimen>
 </resources>

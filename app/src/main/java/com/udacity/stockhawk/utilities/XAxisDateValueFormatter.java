@@ -1,4 +1,4 @@
-package com.udacity.stockhawk.formatter;
+package com.udacity.stockhawk.utilities;
 
 import android.content.Context;
 import android.os.Build;
