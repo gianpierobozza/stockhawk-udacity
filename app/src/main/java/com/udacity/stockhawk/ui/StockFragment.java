@@ -43,7 +43,7 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         SwipeRefreshLayout.OnRefreshListener {
 
     @SuppressWarnings("WeakerAccess")
-    @BindView(R.id.recycler_view) RecyclerView stockRecyclerView;
+    @BindView(R.id.recycler_view) RecyclerView mStockRecyclerView;
     @SuppressWarnings("WeakerAccess")
     @BindView(R.id.swipe_refresh) SwipeRefreshLayout mSwipeRefreshLayout;
     @SuppressWarnings("WeakerAccess")
@@ -76,8 +76,8 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
                 ((Callback) getActivity()).onItemSelected(symbol, vh);
             }
         });
-        stockRecyclerView.setAdapter(mAdapter);
-        stockRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        mStockRecyclerView.setAdapter(mAdapter);
+        mStockRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
         if (null != savedInstanceState) {
             ArrayList<StockParcelable> stockList = savedInstanceState.getParcelableArrayList(BUNDLE_STOCK_KEY);
@@ -121,7 +121,7 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
                 PrefUtils.removeStock(mContext, symbol);
                 mContext.getContentResolver().delete(Contract.Quote.makeUriForStock(symbol), null, null);
             }
-        }).attachToRecyclerView(stockRecyclerView);
+        }).attachToRecyclerView(mStockRecyclerView);
 
         return rootView;
     }

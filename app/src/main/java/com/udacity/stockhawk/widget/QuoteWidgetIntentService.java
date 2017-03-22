@@ -12,8 +12,13 @@ import android.widget.RemoteViews;
 
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.Contract;
-import com.udacity.stockhawk.ui.MainActivity;
+import com.udacity.stockhawk.ui.DetailActivity;
+import com.udacity.stockhawk.ui.StockFragment;
+import com.udacity.stockhawk.ui.WidgetConfigActivity;
 import com.udacity.stockhawk.utilities.DecimalFormatUtils;
+
+import static android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_ID;
+import static android.appwidget.AppWidgetManager.INVALID_APPWIDGET_ID;
 
 public class QuoteWidgetIntentService extends IntentService {
 
@@ -37,48 +42,68 @@ public class QuoteWidgetIntentService extends IntentService {
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this,
                 QuoteWidgetProvider.class));
 
-        String symbol = "GOOG";
-        String[] selectionArgs = {String.valueOf(symbol)};
-        Uri getQuoteUri = Contract.Quote.makeUriForStock(symbol);
+        int incomingWidgetId = intent.getIntExtra(EXTRA_APPWIDGET_ID,
+                INVALID_APPWIDGET_ID);
 
-        Cursor data = getContentResolver().query(
-                getQuoteUri,
-                null,
-                STOCK_COLUMNS[POSITION_SYMBOL] + "=?",
-                selectionArgs,
-                null);
-        if (data == null) {
-            return;
-        }
-        if (!data.moveToFirst()) {
-            data.close();
-            return;
-        }
+        if (incomingWidgetId != INVALID_APPWIDGET_ID) {
+            if (intent.hasExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL)) {
+                String symbol = intent.getStringExtra(
+                        WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL
+                );
+                String[] selectionArgs = {String.valueOf(symbol)};
+                Uri getQuoteUri = Contract.Quote.makeUriForStock(symbol);
 
-        String price = DecimalFormatUtils.getDollarFormat(data.getString(POSITION_PRICE));
-        float absChange = Float.parseFloat(data.getString(POSITION_ABSOLUTE_CHANGE));
-        data.close();
+                Cursor data = getContentResolver().query(
+                        getQuoteUri,
+                        null,
+                        STOCK_COLUMNS[POSITION_SYMBOL] + "=?",
+                        selectionArgs,
+                        null);
+                if (data == null) {
+                    return;
+                }
+                if (!data.moveToFirst()) {
+                    data.close();
+                    return;
+                }
 
-        for (int appWidgetId : appWidgetIds) {
-            RemoteViews views = new RemoteViews(
-                    getPackageName(),
-                    R.layout.widget_quote
-            );
+                String price = DecimalFormatUtils.getDollarFormat(data.getString(POSITION_PRICE));
+                float absChange = Float.parseFloat(data.getString(POSITION_ABSOLUTE_CHANGE));
+                data.close();
 
-            views.setTextViewText(R.id.widget_symbol, symbol);
-            views.setTextViewText(R.id.widget_price, price);
+                for (int appWidgetId : appWidgetIds) {
+                    if (appWidgetId == incomingWidgetId) {
+                        RemoteViews view = new RemoteViews(getPackageName(), R.layout.widget_quote);
 
-            views.setInt(R.id.widget_abs_change, "setBackgroundResource", R.drawable.percent_change_pill_red);
-            if (absChange > 0) {
-                views.setInt(R.id.widget_abs_change, "setBackgroundResource", R.drawable.percent_change_pill_green);
+                        view.setTextViewText(R.id.widget_symbol, symbol);
+                        view.setTextViewText(R.id.widget_price, price);
+
+                        view.setInt(
+                                R.id.widget_abs_change,
+                                "setBackgroundResource",
+                                R.drawable.percent_change_pill_red
+                        );
+                        if (absChange > 0) {
+                            view.setInt(
+                                    R.id.widget_abs_change,
+                                    "setBackgroundResource",
+                                    R.drawable.percent_change_pill_green
+                            );
+                        }
+                        view.setTextViewText(
+                                R.id.widget_abs_change,
+                                DecimalFormatUtils.getDollarFormatWithPlus(absChange)
+                        );
+
+                        Intent launchIntent = new Intent(this, DetailActivity.class);
+                        launchIntent.putExtra(StockFragment.EXTRA_SYMBOL, symbol);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);
+                        view.setOnClickPendingIntent(R.id.widget, pendingIntent);
+
+                        appWidgetManager.updateAppWidget(appWidgetId, view);
+                    }
+                }
             }
-            views.setTextViewText(R.id.widget_abs_change, DecimalFormatUtils.getDollarFormatWithPlus(absChange));
-
-            Intent launchIntent = new Intent(this, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);
-            views.setOnClickPendingIntent(R.id.widget, pendingIntent);
-
-            appWidgetManager.updateAppWidget(appWidgetId, views);
         }
     }
 }

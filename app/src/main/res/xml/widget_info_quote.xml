@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:configure="com.udacity.stockhawk.ui.WidgetConfigActivity"
     android:initialLayout="@layout/widget_quote"
     android:minHeight="@dimen/widget_quote_default_height"
     android:minResizeHeight="@dimen/widget_quote_min_resize_height"
@@ -8,5 +9,5 @@
     android:minWidth="@dimen/widget_quote_default_width"
     android:resizeMode="horizontal"
     android:updatePeriodMillis="0"
+    android:previewImage="@drawable/widget_preview_quote"
     tools:ignore="UnusedAttribute" />
-    <!--android:previewImage="@drawable/widget_preview_quote"-->

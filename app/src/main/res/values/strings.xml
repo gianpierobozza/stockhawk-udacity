@@ -34,4 +34,7 @@
 
     <string name="chart_description">Value over time</string>
 
+    <string name="quote_widget_label">Quote Widget</string>
+    <string name="quote_widget_config_activity_title">Select a Quote</string>
+
 </resources>
