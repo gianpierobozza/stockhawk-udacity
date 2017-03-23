@@ -17,8 +17,7 @@ public class DetailActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             Bundle arguments = new Bundle();
             Intent intent = getIntent();
-            arguments.putString(DetailFragment.DETAIL_COLUMNS[DetailFragment.POSITION_SYMBOL],
-                    intent.getStringExtra(StockFragment.EXTRA_SYMBOL));
+            arguments.putString(MainActivity.EXTRA_SYMBOL, intent.getStringExtra(MainActivity.EXTRA_SYMBOL));
 
             DetailFragment fragment = new DetailFragment();
             fragment.setArguments(arguments);

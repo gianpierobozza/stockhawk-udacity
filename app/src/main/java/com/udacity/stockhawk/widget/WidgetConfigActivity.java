@@ -1,4 +1,4 @@
-package com.udacity.stockhawk.ui;
+package com.udacity.stockhawk.widget;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.Contract;
-import com.udacity.stockhawk.widget.QuoteWidgetIntentService;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,13 +27,13 @@ public class WidgetConfigActivity extends AppCompatActivity  implements
     @SuppressWarnings("WeakerAccess")
     @BindView(R.id.quote_widget_recycler_view) RecyclerView mQuoteWidgetRecyclerView;
     private int mWidgetId;
-    private StockAdapter mAdapter;
+    private WidgetStockAdapter mAdapter;
 
     private static final int QUOTE_WIDGET_STOCK_LOADER = 2;
     public static String EXTRA_QUOTE_WIDGET_SYMBOL = "QUOTE_WIDGET_SYMBOL";
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mWidgetId = INVALID_APPWIDGET_ID;
@@ -49,16 +48,16 @@ public class WidgetConfigActivity extends AppCompatActivity  implements
         setTitle(R.string.quote_widget_config_activity_title);
         ButterKnife.bind(this);
 
-        mAdapter = new StockAdapter(this, new StockAdapter.StockAdapterOnClickHandler() {
+        mAdapter = new WidgetStockAdapter(this, new WidgetStockAdapter.WidgetStockAdapterOnClickHandler() {
             @Override
-            public void onClick(String symbol, StockAdapter.StockViewHolder vh) {
+            public void onClick(String symbol, WidgetStockAdapter.WidgetStockViewHolder vh) {
                 if (mWidgetId != INVALID_APPWIDGET_ID) {
-                    Intent startService = new Intent(WidgetConfigActivity.this,
+                    Intent intent = new Intent(WidgetConfigActivity.this,
                             QuoteWidgetIntentService.class);
-                    startService.putExtra(EXTRA_APPWIDGET_ID, mWidgetId);
-                    startService.putExtra(EXTRA_QUOTE_WIDGET_SYMBOL, symbol);
+                    intent.putExtra(EXTRA_APPWIDGET_ID, mWidgetId);
+                    intent.putExtra(EXTRA_QUOTE_WIDGET_SYMBOL, symbol);
                     setResult(RESULT_OK);
-                    startService(startService);
+                    startService(intent);
 
                     finish();
                 } else {

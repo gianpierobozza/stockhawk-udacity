@@ -12,9 +12,7 @@ import android.widget.RemoteViews;
 
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.Contract;
-import com.udacity.stockhawk.ui.DetailActivity;
-import com.udacity.stockhawk.ui.StockFragment;
-import com.udacity.stockhawk.ui.WidgetConfigActivity;
+import com.udacity.stockhawk.ui.MainActivity;
 import com.udacity.stockhawk.utilities.DecimalFormatUtils;
 
 import static android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_ID;
@@ -95,8 +93,8 @@ public class QuoteWidgetIntentService extends IntentService {
                                 DecimalFormatUtils.getDollarFormatWithPlus(absChange)
                         );
 
-                        Intent launchIntent = new Intent(this, DetailActivity.class);
-                        launchIntent.putExtra(StockFragment.EXTRA_SYMBOL, symbol);
+                        Intent launchIntent = new Intent(this, MainActivity.class);
+                        launchIntent.putExtra(MainActivity.EXTRA_SYMBOL, symbol);
                         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);
                         view.setOnClickPendingIntent(R.id.widget, pendingIntent);
 

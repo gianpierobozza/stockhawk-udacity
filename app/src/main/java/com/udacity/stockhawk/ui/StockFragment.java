@@ -54,8 +54,6 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private static final String BUNDLE_STOCK_KEY = "stockList";
 
-    public static final String EXTRA_SYMBOL = "stockSymbol";
-
     private static final int STOCK_LOADER = 0;
 
     public interface Callback {
@@ -124,25 +122,6 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         }).attachToRecyclerView(mStockRecyclerView);
 
         return rootView;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        // Send the first symbol of the list from SharedPrefs to DetailFragment
-        if (null == savedInstanceState && mTwoPane) {
-            String symbol = PrefUtils.getSymbolAtPos(mContext, 0);
-            if (!symbol.equals("")) {
-                Bundle arguments = new Bundle();
-                arguments.putString(DetailFragment.DETAIL_COLUMNS[DetailFragment.POSITION_SYMBOL],
-                        symbol);
-                DetailFragment fragment = new DetailFragment();
-                fragment.setArguments(arguments);
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.stock_detail_container, fragment)
-                        .commit();
-            }
-        }
     }
 
     @Override

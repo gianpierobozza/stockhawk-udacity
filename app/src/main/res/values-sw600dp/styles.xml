@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="WidgetQuoteSymbolTextStyle">
+        <item name="android:textSize">40sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/abc_primary_text_material_dark</item>
+    </style>
+
+    <style name="WidgetQuotePriceTextStyle">
+        <item name="android:textSize">38sp</item>
+        <item name="android:textColor">@color/abc_primary_text_material_dark</item>
+    </style>
+
+    <style name="WidgetQuotePercentTextStyle">
+        <item name="android:textSize">38sp</item>
+        <item name="android:textColor">#FFF</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>

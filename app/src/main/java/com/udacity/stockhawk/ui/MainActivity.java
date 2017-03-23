@@ -11,34 +11,55 @@ import android.view.MenuItem;
 
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.PrefUtils;
+import com.udacity.stockhawk.sync.QuoteIntentService;
+import com.udacity.stockhawk.widget.WidgetConfigActivity;
+
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements StockFragment.Callback {
 
     private boolean mTwoPane;
+    private String mSymbol;
     private StockFragment mStockFragment;
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
+
+    public static final String EXTRA_SYMBOL = "stockSymbol";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String symbol = getIntent() != null ? getIntent().getStringExtra(StockFragment.EXTRA_SYMBOL) : null;
-        if (findViewById(R.id.stock_detail_container) != null) {
+        Intent inboundIntent = getIntent();
+        mSymbol = null;
+        if (null != inboundIntent && inboundIntent.hasExtra(EXTRA_SYMBOL)) {
+            mSymbol = inboundIntent.getStringExtra(EXTRA_SYMBOL);
+        }
+        if (null != inboundIntent && inboundIntent.hasExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL)) {
+            mSymbol = inboundIntent.getStringExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL);
+        }
+        Timber.d("symbol is %s", mSymbol);
+        if (null != findViewById(R.id.stock_detail_container)) {
             mTwoPane = true;
             if (savedInstanceState == null) {
-                DetailFragment fragment = new DetailFragment();
-                if (symbol != null) {
-                    Bundle args = new Bundle();
-                    args.putString(DetailFragment.DETAIL_COLUMNS[DetailFragment.POSITION_SYMBOL],
-                            symbol);
-                    fragment.setArguments(args);
+                if (null == mSymbol) {
+                    mSymbol = PrefUtils.getSymbolAtPos(this, 0);
                 }
+                DetailFragment fragment = new DetailFragment();
+                Bundle args = new Bundle();
+                args.putString(EXTRA_SYMBOL, mSymbol);
+                fragment.setArguments(args);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.stock_detail_container, fragment, DETAILFRAGMENT_TAG)
                         .commit();
             }
         } else {
+            if (null != mSymbol) {
+                Intent intent = new Intent(this, DetailActivity.class)
+                        .putExtra(EXTRA_SYMBOL, mSymbol);
+
+                ActivityCompat.startActivity(this, intent, null);
+            }
             mTwoPane = false;
         }
 
@@ -51,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements StockFragment.Cal
     public void onItemSelected(String symbol, StockAdapter.StockViewHolder vh) {
         if (mTwoPane) {
             Bundle args = new Bundle();
-            args.putString(DetailFragment.DETAIL_COLUMNS[DetailFragment.POSITION_SYMBOL], symbol);
+            args.putString(EXTRA_SYMBOL, symbol);
 
             DetailFragment fragment = new DetailFragment();
             fragment.setArguments(args);
@@ -62,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements StockFragment.Cal
                     .commit();
         } else {
             Intent intent = new Intent(this, DetailActivity.class)
-                    .putExtra(StockFragment.EXTRA_SYMBOL, symbol);
+                    .putExtra(EXTRA_SYMBOL, symbol);
 
             ActivityCompat.startActivity(this, intent, null);
         }

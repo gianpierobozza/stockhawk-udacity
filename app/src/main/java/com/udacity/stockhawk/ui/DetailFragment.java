@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -27,12 +26,9 @@ import com.udacity.stockhawk.utilities.XAxisDateValueFormatter;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import au.com.bytecode.opencsv.CSVReader;
 import butterknife.BindView;
@@ -68,30 +64,29 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final int DETAIL_LOADER = 1;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Bundle arguments = getArguments();
-        if (arguments != null) {
-            mSymbol = arguments.getString(DETAIL_COLUMNS[POSITION_SYMBOL]);
-            mUri = Contract.Quote.makeUriForStock(mSymbol);
-        }
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         ButterKnife.bind(this, rootView);
 
-        mDetailSymbol.setText(mSymbol);
+        Bundle arguments = getArguments();
+        if (null != arguments) {
+            mSymbol = arguments.getString(MainActivity.EXTRA_SYMBOL);
+            mUri = Contract.Quote.makeUriForStock(mSymbol);
+            mDetailSymbol.setText(mSymbol);
+        }
 
         return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        if ( null != mUri ) {
+        if (null != mUri) {
             String[] selectionArgs = {mSymbol};
             return new CursorLoader(
                     getActivity(),

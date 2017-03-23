@@ -20,4 +20,21 @@
         <item name="android:textSize">25sp</item>
         <item name="android:textAllCaps">true</item>
     </style>
+
+    <style name="WidgetQuoteSymbolTextStyle">
+        <item name="android:textSize">26sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/abc_primary_text_material_dark</item>
+    </style>
+
+    <style name="WidgetQuotePriceTextStyle">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/abc_primary_text_material_dark</item>
+    </style>
+
+    <style name="WidgetQuotePercentTextStyle">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">#FFF</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>
