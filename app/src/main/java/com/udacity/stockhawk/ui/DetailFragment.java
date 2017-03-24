@@ -11,6 +11,7 @@ import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -42,6 +43,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @BindView(R.id.detail_price)TextView mDetailPrice;
     @BindView(R.id.detail_abs_change) TextView mDetailAbsChange;
     @BindView(R.id.detail_perc_change) TextView mDetailPercChange;
+    @BindView(R.id.detail_data) LinearLayout mDetailData;
+    @BindView(R.id.detail_error) TextView mDetailError;
     private Uri mUri;
     private String mSymbol;
 
@@ -72,7 +75,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (null != arguments) {
             mSymbol = arguments.getString(MainActivity.EXTRA_SYMBOL);
             mUri = Contract.Quote.makeUriForStock(mSymbol);
-            mDetailSymbol.setText(mSymbol);
         }
 
         return rootView;
@@ -103,6 +105,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.moveToFirst()) {
+            mDetailSymbol.setText(mSymbol);
             mDetailPrice.setText(DecimalFormatUtils.getDollarFormat(data.getString(POSITION_PRICE)));
 
             float rawAbsoluteChange = Float.parseFloat(data.getString(POSITION_ABSOLUTE_CHANGE));
@@ -150,9 +153,18 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 mLineChart.setData(lineData);
                 mLineChart.setBackgroundColor(Color.WHITE);
                 mLineChart.invalidate();
+
+                mDetailError.setVisibility(View.GONE);
+                mDetailSymbol.setVisibility(View.VISIBLE);
+                mDetailData.setVisibility(View.VISIBLE);
             } catch (IOException exception) {
                 Timber.e(exception, "Error parsing stock history");
             }
+        } else {
+            mDetailError.setText(getString(R.string.error_no_detail));
+            mDetailError.setVisibility(View.VISIBLE);
+            mDetailSymbol.setVisibility(View.INVISIBLE);
+            mDetailData.setVisibility(View.INVISIBLE);
         }
     }
 

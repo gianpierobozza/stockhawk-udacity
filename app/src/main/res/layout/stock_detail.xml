@@ -17,6 +17,7 @@
         tools:text="GOOG" />
 
     <LinearLayout
+        android:id="@+id/detail_data"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -51,4 +52,13 @@
             android:paddingRight="3dp"
             tools:text="100%" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/detail_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        android:visibility="gone"
+        tools:text="Error message" />
 </LinearLayout>

@@ -78,20 +78,23 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         mStockRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
 
         if (null != savedInstanceState) {
-            ArrayList<StockParcelable> stockList = savedInstanceState.getParcelableArrayList(BUNDLE_STOCK_KEY);
-            MatrixCursor matrixCursor = new MatrixCursor(DetailFragment.DETAIL_COLUMNS);
-            getActivity().startManagingCursor(matrixCursor);
-            for (StockParcelable stock: stockList) {
-                matrixCursor.addRow(new Object[] {
-                        stock.getId(),
-                        stock.getSymbol(),
-                        stock.getPrice(),
-                        stock.getAbsolute_change(),
-                        stock.getPercentage_change(),
-                        stock.getHistory()
-                });
+            manageError();
+            if (savedInstanceState.containsKey(BUNDLE_STOCK_KEY)) {
+                ArrayList<StockParcelable> stockList = savedInstanceState.getParcelableArrayList(BUNDLE_STOCK_KEY);
+                MatrixCursor matrixCursor = new MatrixCursor(DetailFragment.DETAIL_COLUMNS);
+                getActivity().startManagingCursor(matrixCursor);
+                for (StockParcelable stock: stockList) {
+                    matrixCursor.addRow(new Object[] {
+                            stock.getId(),
+                            stock.getSymbol(),
+                            stock.getPrice(),
+                            stock.getAbsolute_change(),
+                            stock.getPercentage_change(),
+                            stock.getHistory()
+                    });
+                }
+                mAdapter.setCursor(matrixCursor);
             }
-            mAdapter.setCursor(matrixCursor);
         } else {
             QuoteSyncJob.initialize(mContext, QuoteSyncJob.PERIODIC_ID);
             mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -129,7 +132,7 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         super.onSaveInstanceState(outState);
         Cursor stockCursor = mAdapter.getCursor();
 
-        if (null != stockCursor) {
+        if (null != stockCursor && stockCursor.getCount() != 0) {
             stockCursor.moveToFirst();
             List<StockParcelable> stockList = new ArrayList<>();
             try {
@@ -177,7 +180,10 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onRefresh() {
         QuoteSyncJob.syncImmediately(mContext);
+        manageError();
+    }
 
+    private void manageError() {
         if (!networkUp() && mAdapter.getItemCount() == 0) {
             mSwipeRefreshLayout.setRefreshing(false);
             mError.setText(getString(R.string.error_no_network));
