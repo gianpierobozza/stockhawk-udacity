@@ -11,7 +11,6 @@ import android.view.MenuItem;
 
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.PrefUtils;
-import com.udacity.stockhawk.sync.QuoteIntentService;
 import com.udacity.stockhawk.widget.WidgetConfigActivity;
 
 import timber.log.Timber;
@@ -19,7 +18,6 @@ import timber.log.Timber;
 public class MainActivity extends AppCompatActivity implements StockFragment.Callback {
 
     private boolean mTwoPane;
-    private String mSymbol;
     private StockFragment mStockFragment;
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
 
@@ -31,33 +29,37 @@ public class MainActivity extends AppCompatActivity implements StockFragment.Cal
         setContentView(R.layout.activity_main);
 
         Intent inboundIntent = getIntent();
-        mSymbol = null;
+        String symbol = null;
+        // intent coming from the app
         if (null != inboundIntent && inboundIntent.hasExtra(EXTRA_SYMBOL)) {
-            mSymbol = inboundIntent.getStringExtra(EXTRA_SYMBOL);
+            Timber.d("EXTRA_SYMBOL");
+            symbol = inboundIntent.getStringExtra(EXTRA_SYMBOL);
         }
-        if (null != inboundIntent && inboundIntent.hasExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL)) {
-            mSymbol = inboundIntent.getStringExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL);
+        // intent coming from the widget
+        if (null != inboundIntent &&
+                inboundIntent.hasExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL)) {
+            Timber.d("EXTRA_QUOTE_WIDGET_SYMBOL");
+            symbol = inboundIntent.getStringExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL);
+            // prevent the activity to use the info about the widget extra twice
+            inboundIntent.removeExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL);
         }
-        Timber.d("symbol is %s", mSymbol);
         if (null != findViewById(R.id.stock_detail_container)) {
             mTwoPane = true;
             if (savedInstanceState == null) {
-                if (null == mSymbol) {
-                    mSymbol = PrefUtils.getSymbolAtPos(this, 0);
+                if (null == symbol) {
+                    symbol = PrefUtils.getSymbolAtPos(this, 0);
                 }
                 DetailFragment fragment = new DetailFragment();
                 Bundle args = new Bundle();
-                args.putString(EXTRA_SYMBOL, mSymbol);
+                args.putString(EXTRA_SYMBOL, symbol);
                 fragment.setArguments(args);
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.stock_detail_container, fragment, DETAILFRAGMENT_TAG)
                         .commit();
             }
         } else {
-            if (null != mSymbol) {
-                Intent intent = new Intent(this, DetailActivity.class)
-                        .putExtra(EXTRA_SYMBOL, mSymbol);
-
+            if (null != symbol) {
+                Intent intent = new Intent(this, DetailActivity.class).putExtra(EXTRA_SYMBOL, symbol);
                 ActivityCompat.startActivity(this, intent, null);
             }
             mTwoPane = false;

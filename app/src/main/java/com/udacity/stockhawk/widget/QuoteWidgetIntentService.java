@@ -94,8 +94,8 @@ public class QuoteWidgetIntentService extends IntentService {
                         );
 
                         Intent launchIntent = new Intent(this, MainActivity.class);
-                        launchIntent.putExtra(MainActivity.EXTRA_SYMBOL, symbol);
-                        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);
+                        launchIntent.putExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL, symbol);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, launchIntent, 0);
                         view.setOnClickPendingIntent(R.id.widget, pendingIntent);
 
                         appWidgetManager.updateAppWidget(appWidgetId, view);
