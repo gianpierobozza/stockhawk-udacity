@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="card_elevation">6dp</dimen>
+    <dimen name="card_corner_radius">4dp</dimen>
+    <dimen name="stock_list_additional_horizontal_margin">100dp</dimen>
+
     <!-- Widget -->
     <dimen name="widget_quote_default_width">390dp</dimen>
     <dimen name="widget_quote_default_height">40dp</dimen>
