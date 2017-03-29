@@ -21,7 +21,7 @@ import timber.log.Timber;
 import static android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_ID;
 import static android.appwidget.AppWidgetManager.INVALID_APPWIDGET_ID;
 
-public class WidgetConfigActivity extends AppCompatActivity  implements
+public class WidgetConfigActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
     @SuppressWarnings("WeakerAccess")

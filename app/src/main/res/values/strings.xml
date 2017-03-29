@@ -20,7 +20,6 @@
 
     <string name="action_change_units">@string/pref_display_mode_key</string>
 
-
     <string name="dialog_title">Add Stock</string>
     <string name="dialog_hint">Symbol (e.g. GOOG)</string>
     <string name="dialog_cancel">Cancel</string>
@@ -38,4 +37,6 @@
     <string name="quote_widget_label">Quote Widget</string>
     <string name="quote_widget_config_activity_title">Select a Quote</string>
 
+    <string name="list_widget_label">Stock List Widget</string>
+    <string name="list_widget_empty_view_text">No Data</string>
 </resources>

@@ -165,6 +165,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             mDetailError.setVisibility(View.VISIBLE);
             mDetailSymbol.setVisibility(View.INVISIBLE);
             mDetailData.setVisibility(View.INVISIBLE);
+            mLineChart.clear();
+            mLineChart.setBackgroundColor(Color.DKGRAY);
         }
     }
 

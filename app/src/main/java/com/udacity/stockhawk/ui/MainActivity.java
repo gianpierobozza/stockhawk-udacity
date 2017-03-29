@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.PrefUtils;
+import com.udacity.stockhawk.widget.ListWidgetService;
 import com.udacity.stockhawk.widget.WidgetConfigActivity;
 
 import timber.log.Timber;
@@ -32,16 +33,21 @@ public class MainActivity extends AppCompatActivity implements StockFragment.Cal
         String symbol = null;
         // intent coming from the app
         if (null != inboundIntent && inboundIntent.hasExtra(EXTRA_SYMBOL)) {
-            Timber.d("EXTRA_SYMBOL");
             symbol = inboundIntent.getStringExtra(EXTRA_SYMBOL);
         }
-        // intent coming from the widget
+        // intent coming from the quote widget
         if (null != inboundIntent &&
                 inboundIntent.hasExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL)) {
-            Timber.d("EXTRA_QUOTE_WIDGET_SYMBOL");
             symbol = inboundIntent.getStringExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL);
-            // prevent the activity to use the info about the widget extra twice
+            // prevent the activity to use the info about the quote widget extra twice
             inboundIntent.removeExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL);
+        }
+        // intent coming from the list widget
+        if (null != inboundIntent &&
+                inboundIntent.hasExtra(ListWidgetService.EXTRA_LIST_WIDGET_SYMBOL)) {
+            symbol = inboundIntent.getStringExtra(ListWidgetService.EXTRA_LIST_WIDGET_SYMBOL);
+            // prevent the activity to use the info about the list widget extra twice
+            inboundIntent.removeExtra(ListWidgetService.EXTRA_LIST_WIDGET_SYMBOL);
         }
         if (null != findViewById(R.id.stock_detail_container)) {
             mTwoPane = true;

@@ -7,10 +7,6 @@ import android.content.Intent;
 import com.udacity.stockhawk.sync.QuoteSyncJob;
 
 public class QuoteWidgetProvider extends AppWidgetProvider {
-    /*@Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        context.startService(new Intent(context, QuoteWidgetIntentService.class));
-    }*/
 
     @Override
     public void onReceive(Context context, Intent intent) {
