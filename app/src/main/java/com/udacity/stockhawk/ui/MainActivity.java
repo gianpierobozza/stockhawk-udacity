@@ -12,9 +12,6 @@ import android.view.MenuItem;
 import com.udacity.stockhawk.R;
 import com.udacity.stockhawk.data.PrefUtils;
 import com.udacity.stockhawk.widget.ListWidgetService;
-import com.udacity.stockhawk.widget.WidgetConfigActivity;
-
-import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements StockFragment.Callback {
 
@@ -34,13 +31,6 @@ public class MainActivity extends AppCompatActivity implements StockFragment.Cal
         // intent coming from the app
         if (null != inboundIntent && inboundIntent.hasExtra(EXTRA_SYMBOL)) {
             symbol = inboundIntent.getStringExtra(EXTRA_SYMBOL);
-        }
-        // intent coming from the quote widget
-        if (null != inboundIntent &&
-                inboundIntent.hasExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL)) {
-            symbol = inboundIntent.getStringExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL);
-            // prevent the activity to use the info about the quote widget extra twice
-            inboundIntent.removeExtra(WidgetConfigActivity.EXTRA_QUOTE_WIDGET_SYMBOL);
         }
         // intent coming from the list widget
         if (null != inboundIntent &&

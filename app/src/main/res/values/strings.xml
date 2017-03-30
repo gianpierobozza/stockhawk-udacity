@@ -5,7 +5,6 @@
 
     <string name="pref_stocks_key">stocks</string>
 
-
     <string name="pref_display_mode_key">displayMode</string>
     <string name="pref_display_mode_default">@string/pref_display_mode_percentage_key</string>
 
@@ -16,7 +15,6 @@
     <string name="default_stocks_apple">AAPL</string>
     <string name="default_stocks_microsoft">MSFT</string>
     <string name="default_stocks_facebook">FB</string>
-
 
     <string name="action_change_units">@string/pref_display_mode_key</string>
 
@@ -33,9 +31,6 @@
     <string name="toast_no_connectivity">Will refresh when network available.</string>
 
     <string name="chart_description">Value over time</string>
-
-    <string name="quote_widget_label">Quote Widget</string>
-    <string name="quote_widget_config_activity_title">Select a Quote</string>
 
     <string name="list_widget_label">Stock List Widget</string>
     <string name="list_widget_empty_view_text">No Data</string>

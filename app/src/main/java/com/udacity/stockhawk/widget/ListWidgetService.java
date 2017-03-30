@@ -29,18 +29,22 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     ListRemoteViewsFactory(Context context) {
         mContext = context;
     }
+
     public void onCreate() {
         // Since we reload the cursor in onDataSetChanged() which gets called immediately after
         // onCreate(), nothing to do here.
     }
+
     public void onDestroy() {
         if (mCursor != null) {
             mCursor.close();
         }
     }
+
     public int getCount() {
         return mCursor.getCount();
     }
+
     public RemoteViews getViewAt(int position) {
         String symbol = "";
         String price = "";

@@ -36,7 +36,7 @@ public class ListWidgetProvider extends AppWidgetProvider {
             RemoteViews layout = buildLayout(context, appWidgetIds[i]);
 
             Intent startActivityIntent = new Intent(context, MainActivity.class);
-            PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent startActivityPendingIntent = PendingIntent.getActivity(context, 0, startActivityIntent, 0);
             layout.setPendingIntentTemplate(R.id.list_widget_list_view, startActivityPendingIntent);
 
             appWidgetManager.updateAppWidget(appWidgetIds[i], layout);

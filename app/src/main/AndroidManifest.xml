@@ -44,17 +44,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.MainActivity" />
         </activity>
-        
-        <receiver android:name=".widget.QuoteWidgetProvider"
-            android:label="@string/quote_widget_label">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.udacity.stockhawk.ACTION_DATA_UPDATED" />
-            </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info_quote" />
-        </receiver>
-        <service android:name=".widget.QuoteWidgetIntentService" />
 
         <receiver android:name=".widget.ListWidgetProvider"
             android:label="@string/list_widget_label">
@@ -68,12 +57,6 @@
         <service android:name=".widget.ListWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             android:exported="false" />
-
-        <activity android:name=".widget.WidgetConfigActivity" >
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
-            </intent-filter>
-        </activity>
 
     </application>
 
