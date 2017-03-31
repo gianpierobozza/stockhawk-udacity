@@ -9,7 +9,7 @@ The purpose of this application is to apply the lessons learned during the third
 Clone the repository with the command line:
 
 ```
-$ git clone https://github.com/gianpierobozza/popular-movies-stage2-udacity
+$ git clone https://github.com/gianpierobozza/stockhawk-udacity
 ```
 
 Then Import the project in Android Studio
