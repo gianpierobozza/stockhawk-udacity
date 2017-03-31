@@ -1,6 +1,7 @@
 package com.udacity.stockhawk.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.ConnectivityManager;
@@ -28,6 +29,7 @@ import com.udacity.stockhawk.data.Contract;
 import com.udacity.stockhawk.data.PrefUtils;
 import com.udacity.stockhawk.data.StockParcelable;
 import com.udacity.stockhawk.sync.QuoteSyncJob;
+import com.udacity.stockhawk.widget.ListWidgetService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -96,10 +98,14 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
                 mAdapter.setCursor(matrixCursor);
             }
         } else {
-            QuoteSyncJob.initialize(mContext, QuoteSyncJob.PERIODIC_ID);
             mSwipeRefreshLayout.setOnRefreshListener(this);
             mSwipeRefreshLayout.setRefreshing(true);
-            onRefresh();
+            Intent inboundIntent = getActivity().getIntent();
+            if (null != inboundIntent &&
+                    !inboundIntent.hasExtra(ListWidgetService.EXTRA_LIST_WIDGET_SYMBOL)) {
+                QuoteSyncJob.initialize(mContext, QuoteSyncJob.PERIODIC_ID);
+                onRefresh();
+            }
             getActivity().getSupportLoaderManager().initLoader(STOCK_LOADER, null, this);
         }
 

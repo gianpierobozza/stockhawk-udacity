@@ -34,10 +34,9 @@ public class MainActivity extends AppCompatActivity implements StockFragment.Cal
         }
         // intent coming from the list widget
         if (null != inboundIntent &&
-                inboundIntent.hasExtra(ListWidgetService.EXTRA_LIST_WIDGET_SYMBOL)) {
+                inboundIntent.hasExtra(ListWidgetService.EXTRA_LIST_WIDGET_SYMBOL) &&
+                null == savedInstanceState) {
             symbol = inboundIntent.getStringExtra(ListWidgetService.EXTRA_LIST_WIDGET_SYMBOL);
-            // prevent the activity to use the info about the list widget extra twice
-            inboundIntent.removeExtra(ListWidgetService.EXTRA_LIST_WIDGET_SYMBOL);
         }
         if (null != findViewById(R.id.stock_detail_container)) {
             mTwoPane = true;
