@@ -10,7 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/material_padding_margin"
-        android:paddingRight="@dimen/material_padding_margin" />
+        android:paddingStart="@dimen/material_padding_margin"
+        android:paddingRight="@dimen/material_padding_margin"
+        android:paddingEnd="@dimen/material_padding_margin" />
 
     <TextView
         android:id="@+id/list_widget_empty_view"

@@ -8,7 +8,12 @@
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/stock_chart"
-        android:layout_margin="@dimen/material_padding_margin"
+        android:layout_marginLeft="@dimen/material_padding_margin"
+        android:layout_marginStart="@dimen/material_padding_margin"
+        android:layout_marginRight="@dimen/material_padding_margin"
+        android:layout_marginEnd="@dimen/material_padding_margin"
+        android:layout_marginTop="@dimen/material_padding_margin"
+        android:layout_marginBottom="@dimen/material_padding_margin"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

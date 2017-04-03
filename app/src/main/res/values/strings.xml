@@ -32,7 +32,7 @@
     <string name="toast_stock_added_no_connectivity">Symbol %s added. Will refresh when network available.</string>
     <string name="toast_no_connectivity">Will refresh when network available.</string>
 
-    <string name="chart_description">Value over time</string>
+    <string name="chart_description">Value in $ over Time</string>
 
     <string name="list_widget_label">Stock List Widget</string>
     <string name="list_widget_empty_view_text">No Data</string>

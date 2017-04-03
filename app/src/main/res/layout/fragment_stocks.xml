@@ -16,7 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="@dimen/material_padding_margin"
+            android:paddingStart="@dimen/material_padding_margin"
             android:paddingRight="@dimen/material_padding_margin"
+            android:paddingEnd="@dimen/material_padding_margin"
             android:nextFocusForward="@+id/fab" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
@@ -35,7 +37,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_marginLeft="@dimen/material_padding_margin"
+        android:layout_marginStart="@dimen/material_padding_margin"
+        android:layout_marginRight="@dimen/material_padding_margin"
+        android:layout_marginEnd="@dimen/material_padding_margin"
+        android:layout_marginTop="@dimen/material_padding_margin"
+        android:layout_marginBottom="@dimen/material_padding_margin"
         android:src="@drawable/fab_plus"
         app:backgroundTint="@color/material_blue_500"
         app:borderWidth="0dp"

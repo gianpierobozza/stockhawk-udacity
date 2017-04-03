@@ -1,6 +1,11 @@
 <resources>
     <dimen name="material_padding_margin">16dp</dimen>
 
+    <dimen name="add_stock_dialog_margin">4dp</dimen>
+    <dimen name="add_stock_dialog_margin_top">16dp</dimen>
+    <dimen name="list_item_price_view_margin">10sp</dimen>
+    <dimen name="list_item_change_view_margin">10sp</dimen>
+    <dimen name="list_item_change_view_padding">3dp</dimen>
     <dimen name="list_item_extra_padding">0dp</dimen>
     <dimen name="detail_view_padding">@dimen/material_padding_margin</dimen>
     <dimen name="detail_container_top_margin">@dimen/material_padding_margin</dimen>
