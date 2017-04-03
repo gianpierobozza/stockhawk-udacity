@@ -66,41 +66,45 @@ public final class QuoteSyncJob {
             while (iterator.hasNext()) {
                 String symbol = iterator.next();
                 Stock stock = quotes.get(symbol);
-                StockQuote quote = stock.getQuote();
 
-                if (null != quote.getPrice()) {
-                    float price = quote.getPrice().floatValue();
-                    float change = quote.getChange().floatValue();
-                    float percentChange = quote.getChangeInPercent().floatValue();
+                if (null != stock) {
+                    StockQuote quote = stock.getQuote();
 
-                    List<HistoricalQuote> history = stock.getHistory(from, to, Interval.WEEKLY);
+                    if (null != quote.getPrice()) {
+                        float price = quote.getPrice().floatValue();
+                        float change = quote.getChange().floatValue();
+                        float percentChange = quote.getChangeInPercent().floatValue();
 
-                    StringBuilder historyBuilder = new StringBuilder();
+                        List<HistoricalQuote> history = stock.getHistory(from, to, Interval.WEEKLY);
 
-                    for (HistoricalQuote it : history) {
-                        historyBuilder.append(it.getDate().getTimeInMillis());
-                        historyBuilder.append(", ");
-                        historyBuilder.append(it.getClose());
-                        historyBuilder.append("\n");
+                        StringBuilder historyBuilder = new StringBuilder();
+
+                        for (HistoricalQuote it : history) {
+                            historyBuilder.append(it.getDate().getTimeInMillis());
+                            historyBuilder.append(", ");
+                            historyBuilder.append(it.getClose());
+                            historyBuilder.append("\n");
+                        }
+
+                        ContentValues quoteCV = new ContentValues();
+                        quoteCV.put(Contract.Quote.COLUMN_SYMBOL, symbol);
+                        quoteCV.put(Contract.Quote.COLUMN_PRICE, price);
+                        quoteCV.put(Contract.Quote.COLUMN_PERCENTAGE_CHANGE, percentChange);
+                        quoteCV.put(Contract.Quote.COLUMN_ABSOLUTE_CHANGE, change);
+                        quoteCV.put(Contract.Quote.COLUMN_HISTORY, historyBuilder.toString());
+                        quoteCVs.add(quoteCV);
                     }
-
-                    ContentValues quoteCV = new ContentValues();
-                    quoteCV.put(Contract.Quote.COLUMN_SYMBOL, symbol);
-                    quoteCV.put(Contract.Quote.COLUMN_PRICE, price);
-                    quoteCV.put(Contract.Quote.COLUMN_PERCENTAGE_CHANGE, percentChange);
-                    quoteCV.put(Contract.Quote.COLUMN_ABSOLUTE_CHANGE, change);
-                    quoteCV.put(Contract.Quote.COLUMN_HISTORY, historyBuilder.toString());
-                    quoteCVs.add(quoteCV);
                 }
             }
 
-            context.getContentResolver()
-                    .bulkInsert(
-                            Contract.Quote.URI,
-                            quoteCVs.toArray(new ContentValues[quoteCVs.size()]));
-            Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
-            context.sendBroadcast(dataUpdatedIntent);
-
+            if (quoteCVs.size() != 0) {
+                context.getContentResolver()
+                        .bulkInsert(
+                                Contract.Quote.URI,
+                                quoteCVs.toArray(new ContentValues[quoteCVs.size()]));
+                Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED);
+                context.sendBroadcast(dataUpdatedIntent);
+            }
         } catch (IOException exception) {
             Timber.e(exception, "Error fetching stock quotes");
         }
