@@ -41,7 +41,6 @@ public final class QuoteSyncJob {
     private QuoteSyncJob() { }
 
     static void getQuotes(Context context) {
-        Timber.d("Running sync job");
         Calendar from = Calendar.getInstance();
         Calendar to = Calendar.getInstance();
         from.add(Calendar.YEAR, -YEARS_OF_HISTORY);
@@ -52,15 +51,12 @@ public final class QuoteSyncJob {
             stockCopy.addAll(stockPref);
             String[] stockArray = stockPref.toArray(new String[stockPref.size()]);
 
-            Timber.d(stockCopy.toString());
-
             if (stockArray.length == 0) {
                 return;
             }
 
             Map<String, Stock> quotes = YahooFinance.get(stockArray);
             Iterator<String> iterator = stockCopy.iterator();
-            Timber.d(quotes.toString());
             ArrayList<ContentValues> quoteCVs = new ArrayList<>();
 
             while (iterator.hasNext()) {
@@ -111,7 +107,6 @@ public final class QuoteSyncJob {
     }
 
     private static void schedulePeriodic(Context context, int id) {
-        Timber.d("Scheduling a periodic task");
         JobInfo.Builder builder = new JobInfo.Builder(id, new ComponentName(context, QuoteJobService.class));
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .setPeriodic(PERIOD)

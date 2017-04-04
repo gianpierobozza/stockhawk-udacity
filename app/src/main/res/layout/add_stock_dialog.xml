@@ -16,6 +16,6 @@
         android:layout_marginTop="@dimen/add_stock_dialog_margin_top"
         android:hint="@string/dialog_hint"
         android:inputType="textCapCharacters"
-        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"/>
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"/>
 
 </LinearLayout>
