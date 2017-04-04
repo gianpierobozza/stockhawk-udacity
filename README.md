@@ -24,4 +24,6 @@ This project is licensed under the APACHE2.0 License - see the [LICENSE.md](LICE
 
 ## Acknowledgments
 
+* YahooFinance javadoc (http://financequotes-api.com/javadoc/)
+* MPAndroidChart by PhilJay (https://github.com/PhilJay/MPAndroidChart)
 * IconArchive (http://www.iconarchive.com/show/ios7-style-icons-by-iynque/Stocks-icon.html) for the app icon, licensed under CC Attribution-Noncommercial-No Derivate 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)
