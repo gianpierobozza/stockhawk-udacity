@@ -1,4 +1,4 @@
-package com.udacity.stockhawk.ui;
+package com.gbozza.android.stockhawk.ui;
 
 import android.database.Cursor;
 import android.graphics.Color;
@@ -20,10 +20,10 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.udacity.stockhawk.R;
-import com.udacity.stockhawk.data.Contract;
-import com.udacity.stockhawk.utilities.DecimalFormatUtils;
-import com.udacity.stockhawk.utilities.XAxisDateValueFormatter;
+import com.gbozza.android.stockhawk.R;
+import com.gbozza.android.stockhawk.data.Contract;
+import com.gbozza.android.stockhawk.utilities.DecimalFormatUtils;
+import com.gbozza.android.stockhawk.utilities.XAxisDateValueFormatter;
 
 import java.io.IOException;
 import java.io.StringReader;

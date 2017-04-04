@@ -1,8 +1,27 @@
-package com.udacity.stockhawk.data;
+package com.gbozza.android.stockhawk.data;
+
+/*
+ * Copyright (C) 2016 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * A Parcelable implementation of the Stock model, for serialization purposes
+ */
 public class StockParcelable implements Parcelable {
 
     private int id;
@@ -12,6 +31,16 @@ public class StockParcelable implements Parcelable {
     private String percentage_change;
     private String history;
 
+    /**
+     * Base Constructor for the Class
+     *
+     * @param id the integer id of a stock
+     * @param symbol the symbol associated with the stock
+     * @param price the current price
+     * @param absolute_change the absolute change
+     * @param percentage_change the percentage change
+     * @param history the csv string containing the history of the quote
+     */
     public StockParcelable(int id,
                            String symbol,
                            String price,
@@ -26,6 +55,11 @@ public class StockParcelable implements Parcelable {
         this.history = history;
     }
 
+    /**
+     * Constructor used by the save instance mechanism that handles a Parcel to achieve it
+     *
+     * @param parcel the object containing the stock data of the object we need to create
+     */
     private StockParcelable (Parcel parcel) {
         id = parcel.readInt();
         symbol = parcel.readString();
@@ -34,6 +68,7 @@ public class StockParcelable implements Parcelable {
         percentage_change = parcel.readString();
         history = parcel.readString();
     }
+
 
     public static final Parcelable.Creator<StockParcelable> CREATOR = new Parcelable.Creator<StockParcelable>() {
         @Override
@@ -63,6 +98,10 @@ public class StockParcelable implements Parcelable {
         parcel.writeString(history);
     }
 
+    /*
+     * Following getter and setter methods for the class properties
+     */
+
     public int getId() {
         return id;
     }
@@ -86,4 +125,5 @@ public class StockParcelable implements Parcelable {
     public String getHistory() {
         return history;
     }
+
 }

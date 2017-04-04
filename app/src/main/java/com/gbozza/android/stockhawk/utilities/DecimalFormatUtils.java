@@ -1,4 +1,4 @@
-package com.udacity.stockhawk.utilities;
+package com.gbozza.android.stockhawk.utilities;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

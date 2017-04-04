@@ -1,4 +1,4 @@
-package com.udacity.stockhawk.ui;
+package com.gbozza.android.stockhawk.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,9 +9,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.udacity.stockhawk.R;
-import com.udacity.stockhawk.data.PrefUtils;
-import com.udacity.stockhawk.widget.ListWidgetService;
+import com.gbozza.android.stockhawk.R;
+import com.gbozza.android.stockhawk.data.PrefUtils;
+import com.gbozza.android.stockhawk.widget.ListWidgetService;
 
 public class MainActivity extends AppCompatActivity implements StockFragment.Callback {
 

@@ -1,4 +1,4 @@
-package com.udacity.stockhawk.widget;
+package com.gbozza.android.stockhawk.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -13,10 +13,10 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.widget.RemoteViews;
 
-import com.udacity.stockhawk.R;
-import com.udacity.stockhawk.data.Contract;
-import com.udacity.stockhawk.sync.QuoteSyncJob;
-import com.udacity.stockhawk.ui.MainActivity;
+import com.gbozza.android.stockhawk.R;
+import com.gbozza.android.stockhawk.data.Contract;
+import com.gbozza.android.stockhawk.sync.QuoteSyncJob;
+import com.gbozza.android.stockhawk.ui.MainActivity;
 
 public class ListWidgetProvider extends AppWidgetProvider {
 

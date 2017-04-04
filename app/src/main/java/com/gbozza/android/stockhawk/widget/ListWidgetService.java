@@ -1,4 +1,4 @@
-package com.udacity.stockhawk.widget;
+package com.gbozza.android.stockhawk.widget;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import com.udacity.stockhawk.R;
-import com.udacity.stockhawk.data.Contract;
-import com.udacity.stockhawk.utilities.DecimalFormatUtils;
+import com.gbozza.android.stockhawk.R;
+import com.gbozza.android.stockhawk.data.Contract;
+import com.gbozza.android.stockhawk.utilities.DecimalFormatUtils;
 
 public class ListWidgetService extends RemoteViewsService {
 

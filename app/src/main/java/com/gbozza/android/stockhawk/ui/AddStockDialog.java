@@ -1,4 +1,4 @@
-package com.udacity.stockhawk.ui;
+package com.gbozza.android.stockhawk.ui;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -15,7 +15,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.udacity.stockhawk.R;
+import com.gbozza.android.stockhawk.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

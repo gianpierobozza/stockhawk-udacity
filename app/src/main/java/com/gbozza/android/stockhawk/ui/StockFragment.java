@@ -1,4 +1,4 @@
-package com.udacity.stockhawk.ui;
+package com.gbozza.android.stockhawk.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,12 +24,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.udacity.stockhawk.R;
-import com.udacity.stockhawk.data.Contract;
-import com.udacity.stockhawk.data.PrefUtils;
-import com.udacity.stockhawk.data.StockParcelable;
-import com.udacity.stockhawk.sync.QuoteSyncJob;
-import com.udacity.stockhawk.widget.ListWidgetService;
+import com.gbozza.android.stockhawk.R;
+import com.gbozza.android.stockhawk.data.Contract;
+import com.gbozza.android.stockhawk.data.PrefUtils;
+import com.gbozza.android.stockhawk.data.StockParcelable;
+import com.gbozza.android.stockhawk.sync.QuoteSyncJob;
+import com.gbozza.android.stockhawk.widget.ListWidgetService;
 
 import java.io.IOException;
 import java.util.ArrayList;

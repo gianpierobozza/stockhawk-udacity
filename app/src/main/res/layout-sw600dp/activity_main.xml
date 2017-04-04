@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fragment_stocks"
-        android:name="com.udacity.stockhawk.ui.StockFragment"
+        android:name="com.gbozza.android.stockhawk.ui.StockFragment"
         android:layout_weight="3.5"
         android:layout_width="0dp"
         android:layout_height="match_parent" />

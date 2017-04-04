@@ -8,7 +8,7 @@
     <android.support.v7.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/stock_detail_container"
-        android:name="com.udacity.stockhawk.ui.DetailFragment"
+        android:name="com.udacity.android.stockhawk.ui.DetailFragment"
         android:layout_weight="6"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -24,7 +24,7 @@
 
     <fragment
         android:id="@+id/fragment_stocks"
-        android:name="com.udacity.stockhawk.ui.StockFragment"
+        android:name="com.gbozza.android.stockhawk.ui.StockFragment"
         android:layout_weight="4"
         android:layout_width="match_parent"
         android:layout_height="0dp"

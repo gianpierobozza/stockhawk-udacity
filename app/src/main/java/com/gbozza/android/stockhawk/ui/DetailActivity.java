@@ -1,11 +1,11 @@
-package com.udacity.stockhawk.ui;
+package com.gbozza.android.stockhawk.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.udacity.stockhawk.R;
+import com.gbozza.android.stockhawk.R;
 
 public class DetailActivity extends AppCompatActivity {
 

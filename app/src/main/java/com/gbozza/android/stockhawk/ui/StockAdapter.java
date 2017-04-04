@@ -1,4 +1,4 @@
-package com.udacity.stockhawk.widget;
+package com.gbozza.android.stockhawk.ui;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,21 +9,21 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.udacity.stockhawk.R;
-import com.udacity.stockhawk.data.Contract;
-import com.udacity.stockhawk.data.PrefUtils;
-import com.udacity.stockhawk.utilities.DecimalFormatUtils;
+import com.gbozza.android.stockhawk.R;
+import com.gbozza.android.stockhawk.data.Contract;
+import com.gbozza.android.stockhawk.data.PrefUtils;
+import com.gbozza.android.stockhawk.utilities.DecimalFormatUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-class WidgetStockAdapter extends RecyclerView.Adapter<WidgetStockAdapter.WidgetStockViewHolder> {
+class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
 
     private final Context context;
     private Cursor cursor;
-    private final WidgetStockAdapterOnClickHandler clickHandler;
+    private final StockAdapterOnClickHandler clickHandler;
 
-    WidgetStockAdapter(Context context, WidgetStockAdapterOnClickHandler clickHandler) {
+    StockAdapter(Context context, StockAdapterOnClickHandler clickHandler) {
         this.context = context;
         this.clickHandler = clickHandler;
     }
@@ -33,14 +33,23 @@ class WidgetStockAdapter extends RecyclerView.Adapter<WidgetStockAdapter.WidgetS
         notifyDataSetChanged();
     }
 
-    @Override
-    public WidgetStockViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View item = LayoutInflater.from(context).inflate(R.layout.list_item_quote, parent, false);
-        return new WidgetStockViewHolder(item);
+    Cursor getCursor() {
+        return cursor;
+    }
+
+    String getSymbolAtPosition(int position) {
+        cursor.moveToPosition(position);
+        return cursor.getString(Contract.Quote.POSITION_SYMBOL);
     }
 
     @Override
-    public void onBindViewHolder(WidgetStockViewHolder holder, int position) {
+    public StockViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View item = LayoutInflater.from(context).inflate(R.layout.list_item_quote, parent, false);
+        return new StockViewHolder(item);
+    }
+
+    @Override
+    public void onBindViewHolder(StockViewHolder holder, int position) {
         cursor.moveToPosition(position);
 
         holder.symbol.setText(cursor.getString(Contract.Quote.POSITION_SYMBOL));
@@ -75,18 +84,18 @@ class WidgetStockAdapter extends RecyclerView.Adapter<WidgetStockAdapter.WidgetS
         return count;
     }
 
-    interface WidgetStockAdapterOnClickHandler {
-        void onClick(String symbol, WidgetStockAdapter.WidgetStockViewHolder vh);
+    interface StockAdapterOnClickHandler {
+        void onClick(String symbol, StockAdapter.StockViewHolder vh);
     }
 
-    class WidgetStockViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class StockViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @BindView(R.id.list_item) LinearLayout mListItem;
         @BindView(R.id.symbol) TextView symbol;
         @BindView(R.id.price) TextView price;
         @BindView(R.id.change) TextView change;
 
-        WidgetStockViewHolder(View itemView) {
+        StockViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
