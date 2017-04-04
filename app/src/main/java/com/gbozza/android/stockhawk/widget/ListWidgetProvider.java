@@ -1,5 +1,21 @@
 package com.gbozza.android.stockhawk.widget;
 
+/*
+ * Copyright (C) 2016 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -18,12 +34,19 @@ import com.gbozza.android.stockhawk.data.Contract;
 import com.gbozza.android.stockhawk.sync.QuoteSyncJob;
 import com.gbozza.android.stockhawk.ui.MainActivity;
 
+/**
+ * Based on the official Google documentation for ListView Widgets.
+ * This is the provider for our list.
+ */
 public class ListWidgetProvider extends AppWidgetProvider {
 
     private static HandlerThread sWorkerThread;
     private static Handler sWorkerQueue;
     private static StockProviderObserver sDataObserver;
 
+    /**
+     * Base Constructor
+     */
     public ListWidgetProvider() {
         sWorkerThread = new HandlerThread("ListWidgetProvider-worker");
         sWorkerThread.start();
@@ -55,6 +78,13 @@ public class ListWidgetProvider extends AppWidgetProvider {
         }
     }
 
+    /**
+     * Method that sets the single item view as remote adapter
+     *
+     * @param context
+     * @param appWidgetId the integer of the current widget, there can be multiple ones
+     * @return the RemoteView object
+     */
     private RemoteViews buildLayout(Context context, int appWidgetId) {
         RemoteViews view;
         final Intent intent = new Intent(context, ListWidgetService.class);
@@ -87,11 +117,21 @@ public class ListWidgetProvider extends AppWidgetProvider {
 
 }
 
+/**
+ * Content Observer class extension, notifies widgets for changes in the data
+ */
 class StockProviderObserver extends ContentObserver {
 
     private AppWidgetManager mAppWidgetManager;
     private ComponentName mComponentName;
 
+    /**
+     * Base Constructor
+     *
+     * @param mgr the widget manager instance
+     * @param cn the component name
+     * @param h the handler instance
+     */
     StockProviderObserver(AppWidgetManager mgr, ComponentName cn, Handler h) {
         super(h);
         mAppWidgetManager = mgr;

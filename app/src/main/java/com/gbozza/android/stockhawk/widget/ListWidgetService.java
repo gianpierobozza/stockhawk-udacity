@@ -1,5 +1,21 @@
 package com.gbozza.android.stockhawk.widget;
 
+/*
+ * Copyright (C) 2016 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,6 +27,10 @@ import com.gbozza.android.stockhawk.R;
 import com.gbozza.android.stockhawk.data.Contract;
 import com.gbozza.android.stockhawk.utilities.DecimalFormatUtils;
 
+/**
+ * Based on the official Google documentation for ListView Widgets.
+ * This is the remote view service for our list.
+ */
 public class ListWidgetService extends RemoteViewsService {
 
     public static String EXTRA_LIST_WIDGET_SYMBOL = "LIST_WIDGET_SYMBOL";
@@ -21,6 +41,9 @@ public class ListWidgetService extends RemoteViewsService {
     }
 }
 
+/**
+ * Factory Class extension for the Remote View
+ */
 class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private Context mContext;
@@ -30,21 +53,36 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         mContext = context;
     }
 
+    /**
+     * onCreate will not be used
+     */
     public void onCreate() {
         // Since we reload the cursor in onDataSetChanged() which gets called immediately after
         // onCreate(), nothing to do here.
     }
 
+    /**
+     * Destroy and close the cursor
+     */
     public void onDestroy() {
         if (mCursor != null) {
             mCursor.close();
         }
     }
 
+    /**
+     * Getter method for the number of items in the cursor
+     * @return the size of the cursor
+     */
     public int getCount() {
         return mCursor.getCount();
     }
 
+    /**
+     * This Method binds and attaches all the data of our single item element
+     * @param position the integer position
+     * @return a RemoveView to add to the main list of the widget
+     */
     public RemoteViews getViewAt(int position) {
         String symbol = "";
         String price = "";
@@ -87,6 +125,26 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         return view;
     }
 
+    /**
+     * New query to the Content Provider when the data changes
+     */
+    public void onDataSetChanged() {
+        if (mCursor != null) {
+            mCursor.close();
+        }
+        mCursor = mContext.getContentResolver().query(
+                Contract.Quote.URI,
+                null,
+                null,
+                null,
+                Contract.Quote.COLUMN_SYMBOL
+        );
+    }
+
+    /*
+     * Following getter and setter methods
+     */
+
     public RemoteViews getLoadingView() {
         return null;
     }
@@ -101,19 +159,6 @@ class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     public boolean hasStableIds() {
         return true;
-    }
-
-    public void onDataSetChanged() {
-        if (mCursor != null) {
-            mCursor.close();
-        }
-        mCursor = mContext.getContentResolver().query(
-                Contract.Quote.URI,
-                null,
-                null,
-                null,
-                Contract.Quote.COLUMN_SYMBOL
-        );
     }
 
 }

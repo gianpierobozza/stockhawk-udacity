@@ -1,5 +1,21 @@
 package com.gbozza.android.stockhawk.ui;
 
+/*
+ * Copyright (C) 2016 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -41,6 +57,10 @@ import timber.log.Timber;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
+/**
+ * The Fragment containing the main list of quotes, it implements a callback Loader and a
+ * Swipe Refresh Listener
+ */
 public class StockFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
         SwipeRefreshLayout.OnRefreshListener {
 
@@ -58,10 +78,16 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private static final int STOCK_LOADER = 0;
 
+    /**
+     * Public interface to be implemented, used to manage the click on the single items
+     */
     public interface Callback {
         void onItemSelected(String symbol, StockAdapter.StockViewHolder vh);
     }
 
+    /**
+     * Empty Base Constructor, for reflection
+     */
     public StockFragment() { }
 
     @Override
@@ -152,6 +178,11 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         }
     }
 
+    /**
+     * Utility method to check if the internet connection is available
+     *
+     * @return true or false
+     */
     private boolean networkUp() {
         ConnectivityManager cm =
                 (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -189,6 +220,9 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         manageError();
     }
 
+    /**
+     * Method to show / hide the error message in the main list
+     */
     private void manageError() {
         if (!networkUp() && mAdapter.getItemCount() == 0) {
             mSwipeRefreshLayout.setRefreshing(false);
@@ -206,6 +240,12 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         }
     }
 
+    /**
+     * Method used by the onSaveInstanceState mechanism
+     *
+     * @param cursor the Cursor object containing our data
+     * @return a Parcelable instance of the Stock
+     */
     private StockParcelable createStockFromCursor(Cursor cursor) {
         return new StockParcelable(
                 cursor.getInt(DetailFragment.POSITION_ID),
@@ -217,11 +257,15 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         );
     }
 
+    /**
+     * Asynchronously add a new element in the main list if it exists
+     *
+     * @param symbol
+     */
     void addStock(String symbol) {
         if (symbol != null && !symbol.isEmpty()) {
-
             if (networkUp()) {
-                new StockFragment.SymbolCheckTask().execute(symbol);
+                new StockFragment.SymbolAddTask().execute(symbol);
             } else {
                 String message = getString(R.string.toast_stock_added_no_connectivity, symbol);
                 Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
@@ -231,15 +275,26 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
         }
     }
 
+    /**
+     * Set the flag for the Master/Detail flow or single Activity
+     *
+     * @param twoPane the boolean flag
+     */
     public void setTwoPane(boolean twoPane) {
         mTwoPane = twoPane;
     }
 
-    private class SymbolCheckTask extends AsyncTask<String, Void, Stock> {
+    /**
+     * Background worker that queries the YahooFinance API service to add a new symbol.
+     * Using an Inner class to avoid convolution when having to manipulate the
+     * View elements in the fragment.
+     */
+    private class SymbolAddTask extends AsyncTask<String, Void, Stock> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
             mSwipeRefreshLayout.setRefreshing(true);
         }
 
@@ -266,4 +321,5 @@ public class StockFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         }
     }
+
 }

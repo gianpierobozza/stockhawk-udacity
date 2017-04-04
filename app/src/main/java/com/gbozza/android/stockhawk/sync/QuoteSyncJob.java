@@ -1,5 +1,21 @@
 package com.gbozza.android.stockhawk.sync;
 
+/*
+ * Copyright (C) 2016 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
@@ -28,6 +44,9 @@ import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
 import yahoofinance.quotes.stock.StockQuote;
 
+/**
+ * Main logic class for the Synchronization of quotes
+ */
 public final class QuoteSyncJob {
 
     public static final int PERIODIC_ID = 1;
@@ -40,6 +59,11 @@ public final class QuoteSyncJob {
 
     private QuoteSyncJob() { }
 
+    /**
+     * Method to query the YahooFinance API and get the details for the quotes stored in the app
+     * An Intent is invoked and broadcast if there are no errors in the procedure.
+     * @param context
+     */
     static void getQuotes(Context context) {
         Calendar from = Calendar.getInstance();
         Calendar to = Calendar.getInstance();
@@ -106,6 +130,12 @@ public final class QuoteSyncJob {
         }
     }
 
+    /**
+     * Schedule a Job to update the data
+     *
+     * @param context
+     * @param id univocal integer for the job builder object
+     */
     private static void schedulePeriodic(Context context, int id) {
         JobInfo.Builder builder = new JobInfo.Builder(id, new ComponentName(context, QuoteJobService.class));
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
@@ -115,11 +145,22 @@ public final class QuoteSyncJob {
         scheduler.schedule(builder.build());
     }
 
+    /**
+     * Shorthand method to initialize a job schedule
+     *
+     * @param context
+     * @param id univocal integer for the job builder object
+     */
     public static synchronized void initialize(final Context context, int id) {
         schedulePeriodic(context, id);
         syncImmediately(context);
     }
 
+    /**
+     * Immediately start a synchronization if there's an active connection to the internet
+     *
+     * @param context
+     */
     public static synchronized void syncImmediately(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
